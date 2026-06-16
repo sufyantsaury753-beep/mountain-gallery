@@ -1,0 +1,16 @@
+Masukkan foto galeri Gunung Tampomas di folder ini.
+
+Nama file yang dipakai halaman:
+- tampomas-cover.jpg
+- tampomas-1.jpg
+- tampomas-2.jpg
+- tampomas-3.jpg
+- tampomas-4.jpg
+- tampomas-5.jpg
+- tampomas-6.jpg
+- tampomas-7.jpg
+- tampomas-8.jpg
+- tampomas-9.jpg
+- tampomas-10.jpg
+- tampomas-11.jpg
+- tampomas-12.jpg
