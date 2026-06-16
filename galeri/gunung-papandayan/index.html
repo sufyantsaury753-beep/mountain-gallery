@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gunung Papandayan - Galeri Mountain</title>
+
+  <style>
+    :root {
+      --ig-purple: #833AB4;
+      --ig-pink: #C13584;
+      --ig-rose: #E1306C;
+      --ig-orange: #F56040;
+      --ig-yellow: #FCAF45;
+      --white: #ffffff;
+      --soft-white: #fbfbfb;
+      --text-main: #262626;
+      --text-muted: #737373;
+      --border-soft: #efefef;
+      --shadow-soft: rgba(193, 53, 132, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #ffffff;
+      color: var(--text-main);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(252, 175, 69, 0.13), transparent 30%),
+        radial-gradient(circle at 100% 0%, rgba(225, 48, 108, 0.10), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(131, 58, 180, 0.08), transparent 32%);
+      z-index: -1;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 24px;
+      background: transparent;
+    }
+
+    .topbar {
+      max-width: 1180px;
+      margin: 0 auto 24px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 22px;
+      border-radius: 28px;
+      background: linear-gradient(
+        135deg,
+        var(--ig-purple) 0%,
+        var(--ig-pink) 32%,
+        var(--ig-rose) 58%,
+        var(--ig-orange) 82%,
+        var(--ig-yellow) 100%
+      );
+      color: #ffffff;
+      box-shadow: 0 18px 45px rgba(225, 48, 108, 0.22);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+  width: 84px;
+  height: 84px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(255, 255, 255, 0.28);
+  flex-shrink: 0;
+  padding: 12px;
+}
+
+.logo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+    .brand h1 {
+      font-size: 28px;
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .brand p {
+      margin-top: 5px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: var(--ig-purple);
+      background: #ffffff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 13px;
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(131, 58, 180, 0.18);
+      transition: 0.25s ease;
+    }
+
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(131, 58, 180, 0.28);
+    }
+
+    .hero {
+      max-width: 1180px;
+      margin: 0 auto 24px auto;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .cover-card {
+      position: relative;
+      min-height: 390px;
+      overflow: hidden;
+      border-radius: 32px;
+      border: 1px solid rgba(225, 48, 108, 0.18);
+      background: linear-gradient(135deg, #f8f3ff, #fff4ef);
+      box-shadow: 0 24px 60px rgba(193, 53, 132, 0.18);
+    }
+
+    .cover-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cover-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.02),
+        rgba(38, 38, 38, 0.46)
+      );
+    }
+
+    .cover-label {
+      position: absolute;
+      left: 22px;
+      bottom: 22px;
+      z-index: 2;
+      color: #ffffff;
+    }
+
+    .cover-label span {
+      display: inline-flex;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .cover-label h2 {
+      font-size: 34px;
+      line-height: 1.08;
+      font-weight: 900;
+      text-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .cover-attribution {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  right: 22px;
+  z-index: 3;
+  display: none;
+  padding: 10px 14px;
+  border-radius: 16px;
+  color: #4c1d95;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 30px rgba(131, 58, 180, 0.22);
+  backdrop-filter: blur(10px);
+}
+
+.cover-attribution.show {
+  display: block;
+}
+
+    .info-card {
+      border-radius: 32px;
+      padding: 26px;
+      background: #ffffff;
+      border: 2px solid transparent;
+      background-image:
+        linear-gradient(#ffffff, #ffffff),
+        linear-gradient(135deg, var(--ig-purple), var(--ig-pink), var(--ig-rose), var(--ig-orange), var(--ig-yellow));
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+      box-shadow: 0 24px 60px rgba(131, 58, 180, 0.13);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .tag {
+      width: fit-content;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+      border-radius: 999px;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--ig-purple), var(--ig-rose), var(--ig-orange));
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .info-card h2 {
+      font-size: 32px;
+      line-height: 1.12;
+      font-weight: 900;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--ig-purple), var(--ig-pink), var(--ig-rose), var(--ig-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .info-card p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .meta-chip {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: #fafafa;
+      border: 1px solid var(--border-soft);
+      color: #53305f;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .section-title {
+      max-width: 1180px;
+      margin: 0 auto 14px auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .section-title h2 {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .section-title span {
+      height: 3px;
+      flex: 1;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--ig-purple), var(--ig-pink), var(--ig-rose), var(--ig-orange), var(--ig-yellow));
+    }
+
+    .gallery-grid {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .gallery-item {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #f8f3ff, #fff3e8);
+      border: 1px solid rgba(225, 48, 108, 0.12);
+      box-shadow: 0 12px 28px rgba(131, 58, 180, 0.10);
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: 0.35s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.08);
+    }
+
+    .gallery-item::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background: linear-gradient(135deg, rgba(131, 58, 180, 0.18), rgba(225, 48, 108, 0.18), rgba(245, 96, 64, 0.18));
+      transition: 0.25s ease;
+    }
+
+    .gallery-item:hover::after {
+      opacity: 1;
+    }
+
+    .empty-note {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      text-align: center;
+      color: #8a5a96;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 28px auto 0 auto;
+      padding: 18px 0 4px 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding: 14px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        border-radius: 24px;
+      }
+
+      .brand h1 {
+        font-size: 22px;
+      }
+
+      .brand p {
+        font-size: 12px;
+      }
+
+      .cover-card {
+        min-height: 280px;
+        border-radius: 24px;
+      }
+
+      .cover-label h2,
+      .info-card h2 {
+        font-size: 26px;
+      }
+
+      .info-card {
+        border-radius: 24px;
+        padding: 20px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .gallery-item {
+        border-radius: 16px;
+      }
+    }
+
+    .lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 92vw;
+  max-height: 88vh;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+}
+
+.lightbox-content img {
+  width: 100%;
+  height: auto;
+  max-height: 88vh;
+  object-fit: contain;
+  display: block;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 800;
+  background: linear-gradient(
+    135deg,
+    #833AB4,
+    #C13584,
+    #E1306C,
+    #F56040,
+    #FCAF45
+  );
+  box-shadow: 0 10px 24px rgba(225, 48, 108, 0.36);
+}
+
+.lightbox-caption {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(8px);
+}
+
+.gallery-item,
+.cover-card img {
+  cursor: pointer;
+}
+
+.gallery-item::after,
+.cover-card::after,
+.cover-label,
+.empty-note {
+  pointer-events: none;
+}
+
+.gallery-item,
+.cover-card {
+  cursor: pointer;
+}
+
+.lightbox-caption {
+  display: none !important;
+}
+
+
+.lightbox-caption {
+  display: none !important;
+}
+
+.gallery-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-item {
+  position: relative;
+}
+
+.play-button {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 42px;
+  font-weight: 900;
+  background: rgba(0, 0, 0, 0.18);
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.lightbox-content video {
+  width: 100%;
+  height: auto;
+  max-height: 88vh;
+  object-fit: contain;
+  display: block;
+  background: #000000;
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">
+  <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Mountain Icon" role="img">
+    <defs>
+      <linearGradient id="igLine" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#833AB4"/>
+        <stop offset="35%" stop-color="#C13584"/>
+        <stop offset="70%" stop-color="#F56040"/>
+        <stop offset="100%" stop-color="#FCAF45"/>
+      </linearGradient>
+    </defs>
+
+    <rect x="8" y="8" width="48" height="48" rx="16" fill="#ffffff"/>
+    <path d="M16 42L28 24L36 34L42 28L50 42" fill="none" stroke="url(#igLine)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M24 42H50" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="45" cy="18" r="4" fill="#FCAF45"/>
+  </svg>
+</div>
+        <div>
+          <h1>Mountain Gallery</h1>
+          <p>Gunung Papandayan · Garut</p>
+        </div>
+      </div>
+      <a class="back-button" href="../../index.html">← Kembali ke Peta</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <article class="cover-card" onclick="toggleCoverAtribusi()">
+  <img src="img/papandayan-cover.jpg" alt="Cover Gunung Papandayan" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+
+  <div class="cover-attribution" id="coverAttribution">
+    Foto Gunung Papandayan oleh RonyPS, Wikimedia Commons, CC BY-SA 4.0.
+  </div>
+
+  <div class="empty-note" style="display:none;">Taruh foto cover: img/papandayan-cover.jpg</div>
+
+  <div class="cover-label">
+    <span>Mountain Gallery</span>
+    <h2>Gunung Papandayan</h2>
+  </div>
+</article>
+
+        <article class="info-card">
+  <div class="tag">Garut</div>
+  <h2>Gunung Papandayan</h2>
+
+  <p>
+    Gunung Papandayan merupakan salah satu gunung api populer di Kabupaten Garut,
+    Jawa Barat. Kawasan ini dikenal dengan lanskap kawah belerang, jalur pendakian
+    yang relatif ramah, Hutan Mati, area camping, dan pemandangan pegunungan yang
+    dramatis.
+  </p>
+
+  <p>
+    Galeri ini menampilkan dokumentasi perjalanan, kabut pagi, jalur berbatu,
+    suasana kawah, sunrise, serta panorama khas Papandayan yang cocok untuk
+    pencinta alam dan fotografi outdoor.
+  </p>
+
+  <div class="meta-row">
+    <div class="meta-chip">📍 Cisurupan, Garut</div>
+    <div class="meta-chip">⛰️ ±2.665 Mdpl</div>
+    <div class="meta-chip">🌋 Gunung Api</div>
+    <div class="meta-chip">🌫️ Hutan Mati</div>
+    <div class="meta-chip">🏕️ Camping Area</div>
+    <div class="meta-chip">📷 42 Dokumen</div>
+  </div>
+</article>
+      </section>
+
+      <section class="section-title">
+        <h2>Foto Galeri</h2>
+        <span></span>
+      </section>
+
+      <section class="gallery-grid">
+        <article class="gallery-item">
+  <img src="img/papandayan-1.jpg" alt="Foto papandayan 1" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-1.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-2.jpg" alt="Foto papandayan 2" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-2.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-3.jpg" alt="Foto papandayan 3" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-3.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-4.jpg" alt="Foto papandayan 4" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-4.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-5.jpg" alt="Foto papandayan 5" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-5.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-6.jpg" alt="Foto papandayan 6" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-6.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-7.jpg" alt="Foto papandayan 7" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-7.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-8.jpg" alt="Foto papandayan 8" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-8.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-9.jpg" alt="Foto papandayan 9" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-9.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-10.jpg" alt="Foto papandayan 10" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-10.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-11.jpg" alt="Foto papandayan 11" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-11.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-12.jpg" alt="Foto papandayan 12" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-12.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-13.jpg" alt="Foto papandayan 13" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-13.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-14.jpg" alt="Foto papandayan 14" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-14.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-15.jpg" alt="Foto papandayan 15" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-15.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-16.jpg" alt="Foto papandayan 16" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-16.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-17.jpg" alt="Foto papandayan 17" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-17.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-18.jpg" alt="Foto papandayan 18" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-18.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-19.jpg" alt="Foto papandayan 19" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-19.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-20.jpg" alt="Foto papandayan 20" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-20.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-21.jpg" alt="Foto papandayan 21" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-21.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-22.jpg" alt="Foto papandayan 22" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-22.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-23.jpg" alt="Foto papandayan 23" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-23.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-24.jpg" alt="Foto papandayan 24" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-24.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-25.jpg" alt="Foto papandayan 25" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-25.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-26.jpg" alt="Foto papandayan 26" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-26.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-27.jpg" alt="Foto papandayan 27" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-27.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-28.jpg" alt="Foto papandayan 28" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-28.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-29.jpg" alt="Foto papandayan 29" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-29.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-30.jpg" alt="Foto papandayan 30" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-30.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-31.jpg" alt="Foto papandayan 31" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-31.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-32.jpg" alt="Foto papandayan 32" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-32.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-33.jpg" alt="Foto papandayan 33" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-33.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-34.jpg" alt="Foto papandayan 34" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-34.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-35.jpg" alt="Foto papandayan 35" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-35.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-36.jpg" alt="Foto papandayan 36" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-36.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-37.jpg" alt="Foto papandayan 37" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-37.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-38.jpg" alt="Foto papandayan 38" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-38.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-39.jpg" alt="Foto papandayan 39" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-39.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-40.jpg" alt="Foto papandayan 40" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-40.jpg</div>
+</article>
+
+<article class="gallery-item">
+  <img src="img/papandayan-41.jpg" alt="Foto papandayan 41" onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">img/papandayan-41.jpg</div>
+</article>
+
+<article class="gallery-item video-item">
+  <video muted preload="metadata">
+    <source src="img/papandayan-video-1.mp4" type="video/mp4">
+    Browser kamu tidak mendukung video.
+  </video>
+
+  <div class="play-button">▶</div>
+</article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      Galeri Mountain · Dokumentasi pendakian dan perjalanan alam.
+    </footer>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+  <div class="lightbox-content">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+
+    <img id="lightboxImage" src="" alt="Preview Foto">
+
+    <video id="lightboxVideo" controls style="display:none;">
+      <source id="lightboxVideoSource" src="" type="video/mp4">
+      Browser kamu tidak mendukung video.
+    </video>
+
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<script>
+  var lightbox = document.getElementById("lightbox");
+  var lightboxImage = document.getElementById("lightboxImage");
+  var lightboxVideo = document.getElementById("lightboxVideo");
+  var lightboxVideoSource = document.getElementById("lightboxVideoSource");
+  var lightboxCaption = document.getElementById("lightboxCaption");
+  var lightboxClose = document.getElementById("lightboxClose");
+
+  function toggleCoverAtribusi() {
+    var coverAttribution = document.getElementById("coverAttribution");
+
+    if (coverAttribution) {
+      coverAttribution.classList.toggle("show");
+    }
+  }
+
+  function bukaLightboxFoto(src, alt) {
+    if (!src) return;
+
+    lightboxVideo.pause();
+    lightboxVideo.style.display = "none";
+    lightboxVideoSource.src = "";
+
+    lightboxImage.style.display = "block";
+    lightboxImage.src = src;
+    lightboxImage.alt = alt || "Foto Galeri";
+
+    lightboxCaption.textContent = alt || "Foto Galeri Mountain";
+    lightbox.classList.add("active");
+  }
+
+  function bukaLightboxVideo(src) {
+    if (!src) return;
+
+    lightboxImage.style.display = "none";
+    lightboxImage.src = "";
+
+    lightboxVideo.style.display = "block";
+    lightboxVideoSource.src = src;
+    lightboxVideo.load();
+    lightboxVideo.play();
+
+    lightboxCaption.textContent = "Video Galeri Mountain";
+    lightbox.classList.add("active");
+  }
+
+  document.querySelectorAll(".gallery-item").forEach(function(item) {
+    item.addEventListener("click", function() {
+      var img = item.querySelector("img");
+      var video = item.querySelector("video source");
+
+      if (img && img.style.display !== "none") {
+        bukaLightboxFoto(img.getAttribute("src"), img.getAttribute("alt"));
+        return;
+      }
+
+      if (video) {
+        bukaLightboxVideo(video.getAttribute("src"));
+      }
+    });
+  });
+
+  function tutupLightbox() {
+    lightbox.classList.remove("active");
+
+    lightboxImage.src = "";
+
+    lightboxVideo.pause();
+    lightboxVideoSource.src = "";
+    lightboxVideo.load();
+  }
+
+  lightboxClose.addEventListener("click", tutupLightbox);
+
+  lightbox.addEventListener("click", function(event) {
+    if (event.target === lightbox) {
+      tutupLightbox();
+    }
+  });
+
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+      tutupLightbox();
+    }
+  });
+</script>
+
+
+</body>
+</html>
