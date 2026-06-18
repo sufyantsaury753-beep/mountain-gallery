@@ -719,18 +719,16 @@
 const gallery = document.getElementById("gallery");
 
 for (let i = 1; i <= 38; i++) {
-  gallery.innerHTML =
-    `
-    <article class="gallery-item">
-      <img src="img/mt-papandayan (${i}).jpeg"
-           alt="Foto papandayan ${i}"
-           onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
-      <div class="empty-note" style="display:none;">
-        img/mt-papandayan (${i}).jpeg
-      </div>
-    </article>
-    `
-    + gallery.innerHTML;
+  gallery.innerHTML += `
+<article class="gallery-item">
+  <img src="img/mt-papandayan (${i}).jpeg"
+       alt="Foto papandayan ${i}"
+       onerror="this.style.display='none'; this.parentElement.querySelector('.empty-note').style.display='flex';">
+  <div class="empty-note" style="display:none;">
+    img/mt-papandayan (${i}).jpeg
+  </div>
+</article>
+`;
 }
   
   document.querySelectorAll(".gallery-item").forEach(function(item) {
