@@ -442,64 +442,34 @@ body {
 
 
 .sidebar {
-  position: fixed;
-  top: 90px;          /* turun sedikit dari header */
-  right: -100%;
-  width: 165px;       /* KECIL */
-  max-height: 45vh;   /* TIDAK FULL */
-  
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(6px);
-
-  border-radius: 5px;
-
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-  z-index: 99999;
-
-  transition: 0.3s ease;
-  padding: 5px;
+  width: 150px;
+  max-height: 45vh;
+  background: rgba(255,255,255,0.95);
+  border-right: 1px solid #eee;
   overflow-y: auto;
-
-  border: 1px solid rgba(131,58,180,0.2);
-}
-
-.sidebar.active {
-  left: 0;
+  padding: 4px;
 }
 
 .sidebar h3 {
-  margin-bottom: 14px;
-  font-size: 18px;
-  font-weight: 900;
-  color: #2b1500;
+  font-size: 12px;
+  margin-bottom: 6px;
 }
 
 .sidebar-item {
   padding: 3px 5px;
   margin-bottom: 3px;
-  border-radius: 6px;
-
-  font-size: 10px;   /* 🔥 SUPER KECIL */
-  line-height: 1.15;
-
-  background: linear-gradient(135deg, #f8f3ff, #ffffff);
-  border: 1px solid rgba(131, 58, 180, 0.10);
-
+  border-radius: 5px;
+  font-size: 9px;
+  line-height: 1.1;
+  background: #fff;
+  border: 1px solid rgba(131,58,180,0.1);
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: 0.15s ease;
 }
 
 .sidebar-item:hover {
-  transform: translateX(6px);
   background: linear-gradient(135deg,#833AB4,#C13584,#F56040);
-  color: white;
-  box-shadow: 0 6px 12px rgba(193, 53, 132, 0.35);
-}
-
-.sidebar-item.active {
-  background: linear-gradient(135deg,#833AB4,#E1306C,#F56040);
   color: #fff;
-  font-weight: 300;
 }
 
 .close-btn {
@@ -508,51 +478,17 @@ body {
   margin-bottom: 10px;
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: 72%;   /* lebih kecil dari sebelumnya */
-    padding: 8px;
-  }
-
-  .sidebar h3 {
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-
-  .sidebar-item {
-    padding: 10px;
-    margin-bottom: 8px;
-    font-size: 12px;
-    border-radius: 12px;
-  }
-
-  .sidebar-item small {
-    font-size: 11px;
-  }
-}
-
-.sidebar-item b {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.sidebar-item small {
-  font-size: 10px;
-  opacity: 0.7;
-}
-
-.sidebar-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-body {
-  overflow-x: hidden;
-}
-
 .sidebar {
-  overflow-x: hidden;
+  position: fixed;
+  top: 70px;
+  left: -200px;
+  width: 160px;
+  transition: 0.3s;
+  z-index: 9999;
+}
+
+.sidebar.active {
+  left: 0;
 }
     
   </style>
