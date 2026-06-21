@@ -440,21 +440,21 @@ body {
   user-select: none;
 }
 
-/* ===== SIDEBAR DRAWER ===== */
+
 .sidebar {
   position: fixed;
   top: 0;
-  right: -320px;
-  width: 320px;
+  right: -100%;
+  width: 85%;
+  max-width: 320px;
   height: 100vh;
   background: #ffffff;
   z-index: 99999;
   box-shadow: -10px 0 40px rgba(131, 58, 180, 0.25);
   transition: 0.35s ease;
-  padding: 18px;
+  padding: 14px;
   overflow-y: auto;
 
-  /* ✨ tambahan style premium */
   border-left: 4px solid transparent;
   background-image: linear-gradient(#fff, #fff),
     linear-gradient(135deg,#833AB4,#C13584,#F56040,#FCAF45);
@@ -463,7 +463,7 @@ body {
 }
 
 .sidebar.active {
-  left: 0;
+  right: 0;
 }
 
 .sidebar h3 {
@@ -504,6 +504,18 @@ body {
   margin-bottom: 10px;
 }
 
+@media (max-width: 768px) {
+  .sidebar {
+    width: 88%;
+    padding: 12px;
+  }
+
+  .sidebar-item {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+    
   </style>
 </head>
 
