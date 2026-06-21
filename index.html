@@ -445,17 +445,17 @@ body {
   position: fixed;
   top: 0;
   right: -100%;
-  width: 85%;
-  max-width: 320px;
+  width: 260px; /* KECILKAN */
+  max-width: 75%; /* HP lebih aman */
   height: 100vh;
   background: #ffffff;
   z-index: 99999;
-  box-shadow: -10px 0 40px rgba(131, 58, 180, 0.25);
-  transition: 0.35s ease;
-  padding: 14px;
+  box-shadow: -8px 0 25px rgba(131, 58, 180, 0.18);
+  transition: 0.3s ease;
+  padding: 10px; /* KECILKAN */
   overflow-y: auto;
 
-  border-left: 4px solid transparent;
+  border-left: 3px solid transparent;
   background-image: linear-gradient(#fff, #fff),
     linear-gradient(135deg,#833AB4,#C13584,#F56040,#FCAF45);
   background-origin: border-box;
@@ -463,7 +463,7 @@ body {
 }
 
 .sidebar.active {
-  right: 0;
+  left: 0;
 }
 
 .sidebar h3 {
@@ -506,13 +506,24 @@ body {
 
 @media (max-width: 768px) {
   .sidebar {
-    width: 88%;
-    padding: 12px;
+    width: 72%;   /* lebih kecil dari sebelumnya */
+    padding: 8px;
+  }
+
+  .sidebar h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
   }
 
   .sidebar-item {
-    padding: 12px;
-    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    border-radius: 12px;
+  }
+
+  .sidebar-item small {
+    font-size: 11px;
   }
 }
     
