@@ -445,21 +445,21 @@ body {
   position: fixed;
   top: 0;
   right: -100%;
-  width: 260px; /* KECILKAN */
-  max-width: 75%; /* HP lebih aman */
+  width: 240px;
+  max-width: 70%;
   height: 100vh;
-  background: #ffffff;
+
+  /* ❌ HAPUS PUTIH SOLID */
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+
   z-index: 99999;
-  box-shadow: -8px 0 25px rgba(131, 58, 180, 0.18);
+  box-shadow: -8px 0 25px rgba(131, 58, 180, 0.15);
   transition: 0.3s ease;
-  padding: 10px; /* KECILKAN */
+  padding: 10px;
   overflow-y: auto;
 
-  border-left: 3px solid transparent;
-  background-image: linear-gradient(#fff, #fff),
-    linear-gradient(135deg,#833AB4,#C13584,#F56040,#FCAF45);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
+  border-left: 2px solid rgba(131,58,180,0.3);
 }
 
 .sidebar.active {
