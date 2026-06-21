@@ -431,6 +431,79 @@ body {
         top: 14px;
       }
     }
+
+    /* ===== HAMBURGER ===== */
+.menu-btn {
+  font-size: 28px;
+  cursor: pointer;
+  color: #fff;
+  user-select: none;
+}
+
+/* ===== SIDEBAR DRAWER ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 320px;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 99999;
+  box-shadow: -10px 0 40px rgba(131, 58, 180, 0.25);
+  transition: 0.35s ease;
+  padding: 18px;
+  overflow-y: auto;
+
+  /* ✨ tambahan style premium */
+  border-left: 4px solid transparent;
+  background-image: linear-gradient(#fff, #fff),
+    linear-gradient(135deg,#833AB4,#C13584,#F56040,#FCAF45);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar h3 {
+  margin-bottom: 14px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #2b1500;
+}
+
+.sidebar-item {
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8f3ff, #ffffff);
+  border: 1px solid rgba(131, 58, 180, 0.12);
+  cursor: pointer;
+  transition: 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-item:hover {
+  transform: translateX(6px);
+  background: linear-gradient(135deg,#833AB4,#C13584,#F56040);
+  color: white;
+  box-shadow: 0 12px 25px rgba(193, 53, 132, 0.35);
+}
+
+.sidebar-item.active {
+  background: linear-gradient(135deg,#833AB4,#E1306C,#F56040);
+  color: #fff;
+  font-weight: 700;
+}
+
+.close-btn {
+  font-size: 22px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
   </style>
 </head>
 
@@ -454,6 +527,8 @@ body {
     <path d="M24 42H50" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
     <circle cx="45" cy="18" r="4" fill="#FCAF45"/>
   </svg>
+  
+
 </div>
         <div>
           <h1>Mountain Gallery</h1>
@@ -461,7 +536,13 @@ body {
         </div>
       </div>
 
-      <div class="status">● Mountain Gallery Map</div>
+      <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+
+  <div class="sidebar" id="sidebar">
+  <div class="close-btn" onclick="toggleSidebar()">✕</div>
+  <h3>Daftar Gunung</h3> 
+  <div id="sidebarList"></div>
+</div>
     </div>
 
     
@@ -540,57 +621,137 @@ body {
 });
 
     var dataGunung = [
-      {
-        nama: "Gunung Tampomas",
-        lokasi: "Sumedang",
-        mdpl: "1.684 mdpl",
-        foto: "assets/img/as-tampomas.jpeg",
-        atribusi: "Foto Gunung Tampomas oleh Ajaxx79, Wikimedia Commons, CC BY-SA 4.0.",
-        galeri: "galeri/gunung-tampomas/index.html",
-        lat: -6.7637,
-        lng: 107.9606
-      },
-      {
-        nama: "Gunung Sagara",
-        lokasi: "Garut",
-        mdpl: "2.132 mdpl",
-        foto: "assets/img/as-sagara.jpeg",
-        atribusi: "Foto Gunung Sagara/Talaga Bodas oleh Rangga Prawira, Wikimedia Commons, CC BY-SA 4.0.",
-        galeri: "galeri/gunung-sagara/index.html",
-        lat: -7.220583,
-        lng: 108.057306
-      },
-      {
-        nama: "Gunung Cikuray",
-        lokasi: "Garut",
-        mdpl: "2.821 mdpl",
-        foto: "assets/img/as-cikuray.jpeg",
-        atribusi: "Foto Gunung Cikuray dan Papandayan oleh Pudyatmoko, Wikimedia Commons, CC BY-SA 4.0.",
-        galeri: "galeri/gunung-cikuray/index.html",
-        lat: -7.3226,
-        lng: 107.8599
-      },
-      {
-        nama: "Gunung Papandayan",
-        lokasi: "Garut",
-        mdpl: "2.665 mdpl",
-        foto: "assets/img/as-papandayan.jpeg",
-        atribusi: "Foto Gunung Papandayan oleh RonyPS, Wikimedia Commons, CC BY-SA 4.0.",
-        galeri: "galeri/gunung-papandayan/index.html",
-        lat: -7.3190,
-        lng: 107.7310
-      },
-      {
-        nama: "Gunung Slamet",
-        lokasi: "Jawa Tengah",
-        mdpl: "3.432 mdpl",
-        foto: "assets/img/as-slamet.jpeg",
-        galeri: "galeri/gunung-slamet/index.html",
-        lat: -7.2390,
-        lng: 109.2201,
-        atribusi: "Foto Gunung Slamet oleh wowo_s, Wikimedia Commons, CC BY 3.0."
-      }
-    ];
+  {
+    nama: "Gunung Tampomas",
+    lokasi: "Sumedang",
+    mdpl: "1.684 mdpl",
+    foto: "assets/img/as-tampomas.jpeg",
+    atribusi: "Foto Gunung Tampomas oleh Ajaxx79, Wikimedia Commons, CC BY-SA 4.0.",
+    galeri: "galeri/gunung-tampomas/index.html",
+    lat: -6.7637,
+    lng: 107.9606
+  },
+  {
+    nama: "Gunung Sagara",
+    lokasi: "Garut",
+    mdpl: "2.132 mdpl",
+    foto: "assets/img/as-sagara.jpeg",
+    atribusi: "Foto Gunung Sagara oleh Rangga Prawira.",
+    galeri: "galeri/gunung-sagara/index.html",
+    lat: -7.220583,
+    lng: 108.057306
+  },
+  {
+    nama: "Gunung Cikuray",
+    lokasi: "Garut",
+    mdpl: "2.821 mdpl",
+    foto: "assets/img/as-cikuray.jpeg",
+    atribusi: "Foto Gunung Cikuray oleh Pudyatmoko.",
+    galeri: "galeri/gunung-cikuray/index.html",
+    lat: -7.3226,
+    lng: 107.8599
+  },
+  {
+    nama: "Gunung Papandayan",
+    lokasi: "Garut",
+    mdpl: "2.665 mdpl",
+    foto: "assets/img/as-papandayan.jpeg",
+    atribusi: "Foto Papandayan oleh RonyPS.",
+    galeri: "galeri/gunung-papandayan/index.html",
+    lat: -7.3190,
+    lng: 107.7310
+  },
+  {
+    nama: "Gunung Gede",
+    lokasi: "Cianjur",
+    mdpl: "2.958 mdpl",
+    foto: "assets/img/as-gede.jpeg",
+    atribusi: "Gunung Gede Pangrango National Park",
+    galeri: "galeri/gunung-gede/index.html",
+    lat: -6.786,
+    lng: 106.982
+  },
+  {
+    nama: "Gunung Pangrango",
+    lokasi: "Cianjur",
+    mdpl: "3.019 mdpl",
+    foto: "assets/img/as-pangrango.jpeg",
+    atribusi: "Taman Nasional Gede Pangrango",
+    galeri: "galeri/gunung-pangrango/index.html",
+    lat: -6.770,
+    lng: 106.965
+  },
+  {
+    nama: "Gunung Salak",
+    lokasi: "Bogor–Sukabumi",
+    mdpl: "2.211 mdpl",
+    foto: "assets/img/as-salak.jpeg",
+    atribusi: "Gunung Salak vulkanik aktif",
+    galeri: "galeri/gunung-salak/index.html",
+    lat: -6.716,
+    lng: 106.733
+  },
+  {
+    nama: "Gunung Tangkuban Perahu",
+    lokasi: "Bandung Barat",
+    mdpl: "2.084 mdpl",
+    foto: "assets/img/as-tangkuban.jpeg",
+    atribusi: "Kawah Tangkuban Perahu",
+    galeri: "galeri/gunung-tangkuban/index.html",
+    lat: -6.759,
+    lng: 107.609
+  },
+  {
+    nama: "Gunung Burangrang",
+    lokasi: "Bandung Barat",
+    mdpl: "2.064 mdpl",
+    foto: "assets/img/as-burangrang.jpeg",
+    atribusi: "Gunung Burangrang",
+    galeri: "galeri/gunung-burangrang/index.html",
+    lat: -6.760,
+    lng: 107.562
+  },
+  {
+    nama: "Gunung Patuha",
+    lokasi: "Bandung",
+    mdpl: "2.434 mdpl",
+    foto: "assets/img/as-patuha.jpeg",
+    atribusi: "Kawah Putih Patuha",
+    galeri: "galeri/gunung-patuha/index.html",
+    lat: -7.166,
+    lng: 107.400
+  },
+  {
+    nama: "Gunung Ciremai",
+    lokasi: "Majalengka–Kuningan",
+    mdpl: "3.078 mdpl",
+    foto: "assets/img/as-ciremai.jpeg",
+    atribusi: "Gunung tertinggi Jawa Barat",
+    galeri: "galeri/gunung-ciremai/index.html",
+    lat: -6.892,
+    lng: 108.407
+  },
+  {
+    nama: "Gunung Guntur",
+    lokasi: "Garut",
+    mdpl: "2.249 mdpl",
+    foto: "assets/img/as-guntur.jpeg",
+    atribusi: "Gunung Guntur Garut",
+    galeri: "galeri/gunung-guntur/index.html",
+    lat: -7.149,
+    lng: 107.840
+  },
+  {
+    nama: "Gunung Cikole",
+    lokasi: "Lembang",
+    mdpl: "1.600 mdpl",
+    foto: "assets/img/as-cikole.jpeg",
+    atribusi: "Kawasan wisata Cikole Lembang",
+    galeri: "galeri/gunung-cikole/index.html",
+    lat: -6.783,
+    lng: 107.621
+  }
+];
 
     var markerGunung = [];
 
@@ -662,6 +823,36 @@ body {
 
       markerGunung.push(marker);
     });
+
+    var sidebar = document.getElementById("sidebar");
+var sidebarList = document.getElementById("sidebarList");
+
+function toggleSidebar() {
+  sidebar.classList.toggle("active");
+}
+
+// isi sidebar dari dataGunung
+dataGunung.forEach(function(gunung, index) {
+
+  var item = document.createElement("div");
+  item.className = "sidebar-item";
+  item.innerHTML = "<b>" + gunung.nama + "</b><br><small>" + gunung.lokasi + "</small>";
+
+  item.onclick = function() {
+
+  // hanya fokus ke gunung
+  map.flyTo([gunung.lat, gunung.lng], 11, {
+    duration: 1.2
+  });
+
+  setTimeout(function() {
+    markerGunung[index].openPopup();
+  }, 1200);
+};
+
+  sidebarList.appendChild(item);
+});
+
   </script>
 </body>
 </html>
