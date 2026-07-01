@@ -432,63 +432,295 @@ body {
       }
     }
 
-    /* ===== HAMBURGER ===== */
+/* ===== HAMBURGER MENU MODERN ===== */
 .menu-btn {
-  font-size: 28px;
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-size: 26px;
+  font-weight: 900;
   cursor: pointer;
-  color: #fff;
   user-select: none;
+  transition: 0.22s ease;
 }
 
-
-.sidebar {
-  width: 150px;
-  max-height: 45vh;
-  background: rgba(255,255,255,0.95);
-  border-right: 1px solid #eee;
-  overflow-y: auto;
-  padding: 4px;
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.30);
+  transform: translateY(-1px);
 }
 
-.sidebar h3 {
-  font-size: 12px;
-  margin-bottom: 6px;
-}
-
-.sidebar-item {
-  padding: 3px 5px;
-  margin-bottom: 3px;
-  border-radius: 5px;
-  font-size: 9px;
-  line-height: 1.1;
-  background: #fff;
-  border: 1px solid rgba(131,58,180,0.1);
-  cursor: pointer;
-  transition: 0.15s ease;
-}
-
-.sidebar-item:hover {
-  background: linear-gradient(135deg,#833AB4,#C13584,#F56040);
-  color: #fff;
-}
-
-.close-btn {
-  font-size: 22px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
-.sidebar {
+.site-dropdown {
   position: fixed;
-  top: 70px;
-  left: -200px;
-  width: 160px;
-  transition: 0.3s;
+  top: 128px;
+  right: 48px;
+  width: 280px;
+  padding: 14px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(225, 48, 108, 0.18);
+  box-shadow: 0 24px 60px rgba(131, 58, 180, 0.24);
+  backdrop-filter: blur(14px);
   z-index: 9999;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.96);
+  pointer-events: none;
+  transition: 0.22s ease;
 }
 
-.sidebar.active {
-  left: 0;
+.site-dropdown.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.site-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: #4c1d95;
+}
+
+.site-dropdown-header strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.site-dropdown-header small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #8a5a96;
+  font-weight: 700;
+}
+
+.site-dropdown-header button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 999px;
+  background: #f8f3ff;
+  color: #833AB4;
+  font-size: 17px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(225, 48, 108, 0.10);
+  border-radius: 16px;
+  background: #ffffff;
+  color: #4c1d95;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.22s ease;
+}
+
+.dropdown-item:hover {
+  background: #f8f3ff;
+  transform: translateY(-1px);
+}
+
+.menu-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #833AB4, #C13584, #E1306C, #F56040);
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.menu-icon svg {
+  width: 19px;
+  height: 19px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dropdown-item strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.dropdown-item small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #8a5a96;
+  font-weight: 700;
+}
+
+.dropdown-mountain-list {
+  display: none;
+  max-height: 170px;
+  overflow-y: auto;
+  padding: 8px;
+  margin: -2px 0 8px 45px;
+  border-radius: 16px;
+  background: #fffafd;
+  border: 1px solid rgba(225, 48, 108, 0.12);
+}
+
+.dropdown-mountain-list.active {
+  display: block;
+}
+
+.dropdown-mountain-item {
+  width: 100%;
+  display: block;
+  padding: 9px 10px;
+  margin-bottom: 6px;
+  border: none;
+  border-radius: 12px;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  color: #4c1d95;
+  transition: 0.18s ease;
+}
+
+.dropdown-mountain-item:hover {
+  background: linear-gradient(135deg, #833AB4, #C13584, #F56040);
+  color: #ffffff;
+}
+
+.dropdown-mountain-item strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.dropdown-mountain-item small {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* ===== ABOUT MODAL ===== */
+.about-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(38, 19, 51, 0.42);
+  backdrop-filter: blur(8px);
+}
+
+.about-modal.active {
+  display: flex;
+}
+
+.about-card {
+  position: relative;
+  width: min(460px, 100%);
+  padding: 28px;
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 28px 70px rgba(76, 29, 149, 0.34);
+  border: 1px solid rgba(225, 48, 108, 0.16);
+  text-align: center;
+}
+
+.about-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: #f8f3ff;
+  color: #833AB4;
+  font-size: 17px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.about-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #833AB4, #C13584, #E1306C, #F56040);
+  color: #ffffff;
+}
+
+.about-icon svg {
+  width: 34px;
+  height: 34px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.about-card h2 {
+  margin-bottom: 12px;
+  color: #4c1d95;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.about-card p {
+  margin-bottom: 12px;
+  color: #737373;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.about-button {
+  margin-top: 8px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #833AB4, #C13584, #E1306C, #F56040);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .site-dropdown {
+    top: 160px;
+    right: 22px;
+    left: 22px;
+    width: auto;
+  }
+
+  .dropdown-mountain-list {
+    margin-left: 0;
+  }
 }
     
   </style>
@@ -523,13 +755,93 @@ body {
         </div>
       </div>
 
-      <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+      <button type="button" class="menu-btn" onclick="toggleMenu(event)">
+  ☰
+</button>
 
-  <div class="sidebar" id="sidebar">
-  <div class="close-btn" onclick="toggleSidebar()">✕</div>
-  <h3>Daftar Gunung</h3> 
-  <div id="sidebarList"></div>
+<div class="site-dropdown" id="siteDropdown">
+  <div class="site-dropdown-header">
+    <div>
+      <strong>Menu</strong>
+      <small>Mountain Gallery</small>
+    </div>
+
+    <button type="button" onclick="toggleMenu(event)">✕</button>
+  </div>
+
+  <button type="button" class="dropdown-item" onclick="goToMap(event)">
+    <span class="menu-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 11L12 4L21 11" />
+        <path d="M5 10V20H10V14H14V20H19V10" />
+      </svg>
+    </span>
+    <div>
+      <strong>Beranda Peta</strong>
+      <small>Kembali ke peta utama</small>
+    </div>
+  </button>
+
+  <button type="button" class="dropdown-item" onclick="toggleMountainList(event)">
+    <span class="menu-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 19L9 8L14 15L17 11L21 19H3Z" />
+        <path d="M9 8L11 11H7.5L9 8Z" />
+      </svg>
+    </span>
+    <div>
+      <strong>Daftar Gunung</strong>
+      <small>Lihat semua gunung</small>
+    </div>
+  </button>
+
+  <div class="dropdown-mountain-list" id="dropdownMountainList"></div>
+
+  <button type="button" class="dropdown-item" onclick="openAboutModal(event)">
+    <span class="menu-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.0294 16.9706 3 12 3C7.0294 3 3 7.0294 3 12C3 16.9706 7.0294 21 12 21Z" />
+        <path d="M12 10.5V16" />
+        <path d="M12 8H12.01" />
+      </svg>
+    </span>
+    <div>
+      <strong>Tentang Website</strong>
+      <small>Informasi project</small>
+    </div>
+  </button>
 </div>
+
+<div class="about-modal" id="aboutModal">
+  <div class="about-card">
+    <button type="button" class="about-close" onclick="closeAboutModal()">✕</button>
+
+    <div class="about-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 19L9 8L14 15L17 11L21 19H3Z" />
+        <path d="M9 8L11 11H7.5L9 8Z" />
+        <path d="M17 11L18.5 14H15.5L17 11Z" />
+      </svg>
+    </div>
+
+    <h2>Tentang Mountain Gallery</h2>
+
+    <p>
+      Mountain Gallery adalah website peta interaktif untuk menampilkan lokasi gunung,
+      informasi singkat, dan dokumentasi foto pendakian.
+    </p>
+
+    <p>
+      Pengunjung dapat melihat posisi gunung melalui peta, membuka popup informasi,
+      lalu masuk ke halaman galeri untuk melihat foto dokumentasi setiap gunung.
+    </p>
+
+    <button type="button" class="about-button" onclick="closeAboutModal()">
+      Mengerti
+    </button>
+  </div>
+</div>
+      
     </div>
 
     
@@ -732,33 +1044,89 @@ body {
       markerGunung.push(marker);
     });
 
-    var sidebar = document.getElementById("sidebar");
-var sidebarList = document.getElementById("sidebarList");
+   var siteDropdown = document.getElementById("siteDropdown");
+var dropdownMountainList = document.getElementById("dropdownMountainList");
+var aboutModal = document.getElementById("aboutModal");
 
-function toggleSidebar() {
-  sidebar.classList.toggle("active");
+function toggleMenu(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+
+  siteDropdown.classList.toggle("active");
 }
 
-// isi sidebar dari dataGunung
+function goToMap(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+
+  siteDropdown.classList.remove("active");
+  map.setView([-7.12, 108.35], 8);
+}
+
+function toggleMountainList(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+
+  dropdownMountainList.classList.toggle("active");
+}
+
+function openAboutModal(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+
+  siteDropdown.classList.remove("active");
+  aboutModal.classList.add("active");
+}
+
+function closeAboutModal() {
+  aboutModal.classList.remove("active");
+}
+
 dataGunung.forEach(function(gunung, index) {
+  var item = document.createElement("button");
+  item.type = "button";
+  item.className = "dropdown-mountain-item";
 
-  var item = document.createElement("div");
-  item.className = "sidebar-item";
-  item.innerHTML = "<b>" + gunung.nama + "</b><br><small>" + gunung.lokasi + "</small>";
+  item.innerHTML =
+    "<strong>" + gunung.nama + "</strong>" +
+    "<small>" + gunung.lokasi + "</small>";
 
-  item.onclick = function() {
+  item.onclick = function(event) {
+    event.stopPropagation();
 
-  // hanya fokus ke gunung
-  map.flyTo([gunung.lat, gunung.lng], 11, {
-    duration: 1.2
-  });
+    siteDropdown.classList.remove("active");
 
-  setTimeout(function() {
-    markerGunung[index].openPopup();
-  }, 1200);
-};
+    map.flyTo([gunung.lat, gunung.lng], 11, {
+      duration: 1.2,
+      easeLinearity: 0.25
+    });
 
-  sidebarList.appendChild(item);
+    setTimeout(function() {
+      if (markerGunung[index]) {
+        markerGunung[index].openPopup();
+      }
+    }, 1200);
+  };
+
+  dropdownMountainList.appendChild(item);
+});
+
+document.addEventListener("click", function(event) {
+  var menuButton = document.querySelector(".menu-btn");
+
+  if (!siteDropdown.contains(event.target) && !menuButton.contains(event.target)) {
+    siteDropdown.classList.remove("active");
+  }
+});
+
+aboutModal.addEventListener("click", function(event) {
+  if (event.target === aboutModal) {
+    closeAboutModal();
+  }
 });
 
   </script>
