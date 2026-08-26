@@ -36,15 +36,12 @@
         </div>
         <div class="brand-info">
           <h1>Mountain Gallery</h1>
-          <p>Eksplorasi Puncak & Jalur Pendakian Indonesia</p>
+          <p>Eksplorasi Puncak &amp; Jalur Pendakian Indonesia</p>
         </div>
       </a>
 
       <div class="topbar-actions">
-        <button type="button" class="nav-btn" onclick="openAboutModal(event)">
-          <span class="svg-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
-          Tentang Kami
-        </button>
+        <!-- Hamburger Menu Button -->
         <button type="button" class="menu-trigger-btn" onclick="toggleMenu(event)" aria-label="Buka Menu">
           <span class="svg-icon"><svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>
         </button>
@@ -53,10 +50,39 @@
       <!-- Dropdown Drawer Menu -->
       <div class="site-dropdown" id="siteDropdown">
         <div class="dropdown-header">
-          <strong>Pilih Destinasi Gunung</strong>
-          <span class="svg-icon" onclick="toggleMenu(event)"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+          <div>
+            <strong>Navigasi Menu</strong>
+            <small>Mountain Gallery System</small>
+          </div>
+          <button type="button" class="dropdown-close-btn" onclick="toggleMenu(event)" aria-label="Tutup Menu">
+            <span class="svg-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+          </button>
         </div>
+
+        <!-- Menu Item 1: Pilih Destinasi Gunung -->
+        <button type="button" class="dropdown-item" onclick="toggleMountainList(event)">
+          <span class="menu-icon-box">
+            <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
+          </span>
+          <div>
+            <strong>Pilih Destinasi Gunung</strong>
+            <small>5 Gunung di Jawa Barat &amp; Jawa Tengah</small>
+          </div>
+        </button>
+
+        <!-- Dropdown Container for Mountains List -->
         <div class="dropdown-mountain-list" id="dropdownMountainList"></div>
+
+        <!-- Menu Item 2: Informasi Tentang Kami (Didalam Hamburger) -->
+        <button type="button" class="dropdown-item" onclick="openAboutModal(event)">
+          <span class="menu-icon-box">
+            <span class="svg-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+          </span>
+          <div>
+            <strong>Tentang Mountain Gallery</strong>
+            <small>Informasi &amp; Dokumentasi Proyek</small>
+          </div>
+        </button>
       </div>
     </header>
 
@@ -126,22 +152,33 @@
 
     <!-- Footer -->
     <footer class="site-footer">
-      <div>© 2026 <strong>Mountain Gallery</strong> · Dokumentasi & Eksplorasi Jalur Pendakian Indonesia.</div>
+      <div>© 2026 <strong>Mountain Gallery</strong> · Dokumentasi &amp; Eksplorasi Jalur Pendakian Indonesia.</div>
       <div>Dibuat dengan ❤️ untuk para pendaki dan pecinta alam.</div>
     </footer>
   </div>
 
-  <!-- About Modal -->
-  <div class="about-modal" id="aboutModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Tentang Mountain Gallery</h3>
-        <button type="button" class="modal-close-btn" onclick="closeAboutModal()">&times;</button>
+  <!-- About Modal (Accessible via Hamburger Menu) -->
+  <div class="app-modal" id="aboutModal">
+    <div class="app-modal-card">
+      <button type="button" class="modal-close-btn" onclick="closeAboutModal()" aria-label="Tutup">
+        <span class="svg-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+      </button>
+
+      <div class="modal-hero-icon">
+        <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
       </div>
-      <div class="modal-body">
-        <p><strong>Mountain Gallery</strong> adalah platform galeri interaktif berbasis peta digital yang mendokumentasikan keindahan alam, jalur pendakian, dan momen berharga di berbagai puncak gunung di Indonesia.</p>
-        <p style="margin-top:10px;">Setiap destinasi dilengkapi foto beresolusi tinggi, cuplikan video dokumentasi, informasi ketinggian mdpl, estimasi waktu tempuh, dan tingkat kesulitan medan pendakian.</p>
-      </div>
+
+      <h2>Mountain Gallery</h2>
+      <p>
+        <strong>Mountain Gallery</strong> adalah platform galeri interaktif berbasis peta digital yang mendokumentasikan keindahan alam, jalur pendakian, dan arsip momen berharga di berbagai puncak gunung di Indonesia.
+      </p>
+      <p>
+        Setiap destinasi dilengkapi foto beresolusi tinggi, cuplikan video dokumentasi, informasi ketinggian mdpl, estimasi waktu tempuh, dan tingkat kesulitan medan pendakian.
+      </p>
+
+      <button type="button" class="modal-action-btn" onclick="closeAboutModal()">
+        Mulai Menjelajah
+      </button>
     </div>
   </div>
 
