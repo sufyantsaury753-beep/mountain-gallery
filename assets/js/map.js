@@ -1,6 +1,6 @@
 /**
  * MOUNTAIN GALLERY - MAP LOGIC
- * Interactive Leaflet Map with Basemap Switcher & Region Filters
+ * Interactive Leaflet Map with Basemap Switcher, Region Filters & Smooth Zoom
  */
 
 let map;
@@ -22,10 +22,6 @@ const mapLayers = {
   satellite: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
     attribution: "Tiles © Esri",
     maxZoom: 18
-  }),
-  dark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution: "© CartoDB dark matter",
-    maxZoom: 19
   })
 };
 
@@ -89,6 +85,7 @@ function initMap() {
 }
 
 function setBasemap(type) {
+  if (!mapLayers[type]) return;
   if (activeLayer) map.removeLayer(activeLayer);
   activeLayer = mapLayers[type].addTo(map);
 
@@ -177,10 +174,38 @@ function fokusGunung(gunung, targetMarker) {
     if (targetMarker) {
       targetMarker.openPopup();
     } else {
-      const found = markers.find(m => m.gunungData.id === gunung.id);
+      const found = markers.find(m => m.gunungData && m.gunungData.id === gunung.id);
       if (found) found.openPopup();
     }
   }, 1250);
+}
+
+function selectMountainFromMenu(mountainId) {
+  // Tutup dropdown menu hamburger
+  const dropdown = document.getElementById("siteDropdown");
+  if (dropdown) dropdown.classList.remove("active");
+
+  const gunung = getGunungById(mountainId);
+  if (gunung) {
+    // Reset filter jika gunung berada di luar filter saat ini
+    if (currentFilterRegion !== "all" || currentFilterElevation > 0) {
+      currentFilterRegion = "all";
+      currentFilterElevation = 0;
+      document.querySelectorAll(".filter-chip").forEach(c => {
+        c.classList.toggle("active", c.dataset.filter === "all");
+      });
+      renderMarkers();
+    }
+
+    // Scroll otomatis ke area peta jika di layar HP
+    const mapSection = document.querySelector(".map-section");
+    if (mapSection) {
+      mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    const marker = markers.find(m => m.gunungData && m.gunungData.id === gunung.id);
+    fokusGunung(gunung, marker);
+  }
 }
 
 function setupFilters() {
@@ -199,9 +224,6 @@ function setupFilters() {
       } else if (filterType === "jateng") {
         currentFilterRegion = "Jawa Tengah";
         currentFilterElevation = 0;
-      } else if (filterType === "high") {
-        currentFilterRegion = "all";
-        currentFilterElevation = 2500;
       }
 
       renderMarkers();
@@ -214,13 +236,13 @@ function setupDrawerMenu() {
 
   if (mountainDropdownList) {
     mountainDropdownList.innerHTML = LIST_GUNUNG.map(g => `
-      <a class="dropdown-mountain-item" href="galeri/index.html?id=${g.id}">
+      <button type="button" class="dropdown-mountain-item" onclick="selectMountainFromMenu('${g.id}')">
         <strong>
           <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
           ${g.nama}
         </strong>
         <span>${g.mdplText}</span>
-      </a>
+      </button>
     `).join("");
   }
 }
