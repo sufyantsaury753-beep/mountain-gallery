@@ -27,6 +27,8 @@ function checkAuthAndRender() {
   } else {
     loginScreen.style.display = "flex";
     adminContainer.classList.remove("active");
+    const loginForm = document.getElementById("formLogin");
+    if (loginForm) loginForm.reset();
   }
 }
 
@@ -45,6 +47,8 @@ function handleLogin(e) {
 
 function handleLogout() {
   MountainDB.logout();
+  const loginForm = document.getElementById("formLogin");
+  if (loginForm) loginForm.reset();
   showToast("Anda telah berhasil logout.", "info");
   checkAuthAndRender();
 }
