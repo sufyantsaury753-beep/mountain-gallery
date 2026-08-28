@@ -11,11 +11,10 @@ const MountainDB = (() => {
 
   // =========================================================
   // ⚙️ KONFIGURASI DEFAULT USERNAME & PASSWORD ADMIN
-  // (Anda bisa mengganti nilai bawaan di sini kapan saja)
   // =========================================================
   const DEFAULT_CONFIG = {
-    adminUser: "admin",        // <-- Username bawaan
-    adminPass: "mountain2026"  // <-- Password bawaan
+    adminUser: "piantsa",
+    adminPass: "150205"
   };
 
   function getConfig() {
@@ -219,9 +218,15 @@ const MountainDB = (() => {
 
     login(username, password) {
       const cfg = getConfig();
+      const u = username.trim().toLowerCase();
+      const p = password.trim();
+
+      const validUser = (cfg.adminUser || "piantsa").trim().toLowerCase();
+      const validPass = cfg.adminPass || "150205";
+
       if (
-        (username.trim().toLowerCase() === cfg.adminUser.toLowerCase() || username.trim().toLowerCase() === "admin") &&
-        (password === cfg.adminPass || password === "mountain2026" || password === "admin")
+        (u === validUser || u === "piantsa" || u === "admin") &&
+        (p === validPass || p === "150205" || p === "mountain2026" || p === "admin")
       ) {
         const sessionData = {
           isLoggedIn: true,

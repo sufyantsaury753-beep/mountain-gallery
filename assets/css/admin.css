@@ -40,6 +40,9 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  max-width: 100%;
 }
 .svg-icon svg {
   width: 100%;
@@ -49,6 +52,7 @@ body {
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+  display: block;
 }
 
 /* =========================================================
@@ -155,15 +159,26 @@ body {
 .back-to-site {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 20px;
-  font-size: 12.5px;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+  font-size: 13px;
   color: var(--admin-muted);
   text-decoration: none;
   font-weight: 700;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  padding: 8px 16px;
+  border-radius: var(--admin-radius-sm);
 }
-.back-to-site:hover { color: var(--admin-secondary); }
+.back-to-site:hover {
+  color: var(--admin-secondary);
+  background: rgba(225, 48, 108, 0.06);
+}
+.back-to-site .svg-icon {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+}
 
 /* =========================================================
    2. ADMIN APP CONTAINER & TOPBAR
