@@ -497,10 +497,11 @@ function handleResetDefaultDB() {
 function handleChangePassword(e) {
   e.preventDefault();
   const oldPass = document.getElementById("oldPasswordInput").value;
+  const newUser = document.getElementById("newUsernameInput")?.value?.trim() || null;
   const newPass = document.getElementById("newPasswordInput").value;
 
-  if (MountainDB.changePassword(oldPass, newPass)) {
-    showToast("Password admin berhasil diperbarui!", "success");
+  if (MountainDB.changeCredentials(oldPass, newUser, newPass)) {
+    showToast("Akun Admin (Username & Password) berhasil diperbarui!", "success");
     document.getElementById("formChangePassword").reset();
   } else {
     showToast("Password lama salah!", "error");

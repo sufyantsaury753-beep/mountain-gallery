@@ -9,9 +9,13 @@ const MountainDB = (() => {
   const AUTH_KEY = "mountain_gallery_auth_session";
   const CONFIG_KEY = "mountain_gallery_config";
 
+  // =========================================================
+  // ⚙️ KONFIGURASI DEFAULT USERNAME & PASSWORD ADMIN
+  // (Anda bisa mengganti nilai bawaan di sini kapan saja)
+  // =========================================================
   const DEFAULT_CONFIG = {
-    adminUser: "admin",
-    adminPass: "mountain2026"
+    adminUser: "admin",        // <-- Username bawaan
+    adminPass: "mountain2026"  // <-- Password bawaan
   };
 
   function getConfig() {
@@ -58,6 +62,8 @@ const MountainDB = (() => {
   }
 
   return {
+    getConfig,
+
     getAll() {
       const db = getDatabaseMap();
       return Object.values(db);
@@ -233,14 +239,23 @@ const MountainDB = (() => {
       return true;
     },
 
-    changePassword(oldPass, newPass) {
+    changeCredentials(oldPass, newUsername, newPass) {
       const cfg = getConfig();
       if (oldPass === cfg.adminPass || oldPass === "mountain2026" || oldPass === "admin") {
-        cfg.adminPass = newPass;
+        if (newUsername && newUsername.trim()) {
+          cfg.adminUser = newUsername.trim();
+        }
+        if (newPass && newPass.trim()) {
+          cfg.adminPass = newPass.trim();
+        }
         localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
         return true;
       }
       return false;
+    },
+
+    changePassword(oldPass, newPass) {
+      return this.changeCredentials(oldPass, null, newPass);
     }
   };
 })();

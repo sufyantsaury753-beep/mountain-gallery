@@ -275,17 +275,22 @@
 
           <!-- Password Settings Card -->
           <div style="background:var(--admin-surface); border:1px solid var(--admin-border); border-radius:var(--admin-radius-md); padding:24px;">
-            <h3 style="font-size:16px; font-weight:900; margin-bottom:8px;">🔑 Ganti Kata Sandi Admin</h3>
+            <h3 style="font-size:16px; font-weight:900; margin-bottom:8px;">🔑 Ganti Username &amp; Password Admin</h3>
+            <p style="font-size:12px; color:var(--admin-muted); margin-bottom:14px;">Ubah akun login portal admin Anda kapan saja.</p>
             <form id="formChangePassword">
               <div class="form-group">
-                <label>Password Lama</label>
-                <input type="password" id="oldPasswordInput" class="form-control" placeholder="••••••••" required>
+                <label>Password Lama Saat Ini *</label>
+                <input type="password" id="oldPasswordInput" class="form-control" placeholder="••••••••" required autocomplete="current-password">
               </div>
               <div class="form-group">
-                <label>Password Baru</label>
-                <input type="password" id="newPasswordInput" class="form-control" placeholder="••••••••" required>
+                <label>Username Baru (Opsional)</label>
+                <input type="text" id="newUsernameInput" class="form-control" placeholder="cth: sufyan (kosongkan jika tetap admin)" autocomplete="username">
               </div>
-              <button type="submit" class="btn-admin btn-admin-primary">Perbarui Password</button>
+              <div class="form-group">
+                <label>Password Baru *</label>
+                <input type="password" id="newPasswordInput" class="form-control" placeholder="••••••••" required autocomplete="new-password">
+              </div>
+              <button type="submit" class="btn-admin btn-admin-primary">Perbarui Akun Admin</button>
             </form>
           </div>
 
