@@ -373,12 +373,22 @@ function renderMediaManager() {
 }
 
 function openAddMediaModal() {
-  if (!currentSelectedMountainId) {
-    showToast("Pilih gunung terlebih dahulu!", "warning");
-    return;
+  const select = document.getElementById("mediaMountainSelect");
+  if (!currentSelectedMountainId && select && select.value) {
+    currentSelectedMountainId = select.value;
   }
+  if (!currentSelectedMountainId) {
+    const all = MountainDB.getAll();
+    if (all.length > 0) currentSelectedMountainId = all[0].id;
+  }
+
   document.getElementById("formAddMedia").reset();
   document.getElementById("mediaSrcPreview").style.display = "none";
+  const status = document.getElementById("uploadStatusText");
+  if (status) {
+    status.style.display = "none";
+    status.textContent = "";
+  }
   document.getElementById("modalAddMedia").classList.add("active");
 }
 
@@ -386,30 +396,102 @@ function closeAddMediaModal() {
   document.getElementById("modalAddMedia").classList.remove("active");
 }
 
-// Handle File Upload to Base64
-function handleImageFileUpload(e) {
+// Client-side smart image compression (Canvas)
+function compressImageFile(file, maxWidth = 1400, maxHeight = 1400, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+        resolve(compressedDataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+}
+
+// Handle File Upload with Auto-Optimization
+async function handleImageFileUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  if (file.size > 8 * 1024 * 1024) {
-    alert("Ukuran gambar terlalu besar! Maksimal 8MB disarankan.");
+  const statusText = document.getElementById("uploadStatusText");
+  if (statusText) {
+    statusText.style.display = "block";
+    statusText.style.background = "#eff6ff";
+    statusText.style.color = "#1e40af";
+    statusText.style.borderColor = "#bfdbfe";
+    statusText.textContent = "⏳ Sedang memproses dan mengoptimalkan ukuran foto...";
   }
 
-  const reader = new FileReader();
-  reader.onload = function(event) {
-    const dataUrl = event.target.result;
-    document.getElementById("mediaSrcInput").value = dataUrl;
+  try {
+    const compressed = await compressImageFile(file, 1400, 1400, 0.82);
+    document.getElementById("mediaSrcInput").value = compressed;
     
     // Preview
     const preview = document.getElementById("mediaSrcPreview");
-    preview.src = dataUrl;
+    preview.src = compressed;
     preview.style.display = "block";
-  };
-  reader.readAsDataURL(file);
+
+    if (statusText) {
+      statusText.style.background = "#f0fdf4";
+      statusText.style.color = "#166534";
+      statusText.style.borderColor = "#bbf7d0";
+      statusText.textContent = "✓ Foto berhasil dimuat & dioptimalkan HD (Siap disimpan)";
+    }
+  } catch (err) {
+    console.warn("Auto compress fallback:", err);
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const dataUrl = event.target.result;
+      document.getElementById("mediaSrcInput").value = dataUrl;
+      const preview = document.getElementById("mediaSrcPreview");
+      preview.src = dataUrl;
+      preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 function handleSaveMedia(e) {
   e.preventDefault();
+  
+  const select = document.getElementById("mediaMountainSelect");
+  if (!currentSelectedMountainId && select && select.value) {
+    currentSelectedMountainId = select.value;
+  }
+  const targetMountainId = currentSelectedMountainId || (MountainDB.getAll()[0]?.id);
+
+  if (!targetMountainId) {
+    showToast("Pilih destinasi gunung terlebih dahulu!", "error");
+    return;
+  }
+
   const src = document.getElementById("mediaSrcInput").value.trim();
   const title = document.getElementById("mediaTitleInput").value.trim();
   const type = document.getElementById("mediaTypeSelect").value;
@@ -417,11 +499,11 @@ function handleSaveMedia(e) {
   const isCover = document.getElementById("mediaIsCoverCheckbox").checked;
 
   if (!src) {
-    showToast("Pilih file gambar atau masukkan URL media!", "error");
+    showToast("Pilih file foto atau masukkan link URL gambar!", "error");
     return;
   }
 
-  const success = MountainDB.addMedia(currentSelectedMountainId, {
+  const success = MountainDB.addMedia(targetMountainId, {
     src,
     title: title || "Dokumentasi Pendakian",
     type,
@@ -431,11 +513,13 @@ function handleSaveMedia(e) {
   });
 
   if (success) {
-    showToast("Media berhasil ditambahkan!", "success");
+    showToast("✓ Foto dokumentasi berhasil ditambahkan ke galeri!", "success");
     closeAddMediaModal();
     renderMediaManager();
     renderMountainTable();
     renderDashboardOverview();
+  } else {
+    showToast("Gagal menyimpan ke database lokal. Pastikan format foto valid.", "error");
   }
 }
 

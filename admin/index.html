@@ -443,16 +443,18 @@
               <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
             </div>
             <h4>Klik untuk Pilih Foto dari Komputer</h4>
-            <p>Format JPG, PNG, WEBP (Otomatis dikonversi &amp; disimpan ke database)</p>
+            <p>Format JPG, PNG, WEBP (Otomatis dikonversi &amp; dioptimalkan HD)</p>
           </div>
           <input type="file" id="mediaFileInput" accept="image/*" style="display:none;">
+
+          <div id="uploadStatusText" style="display:none; font-size:12px; font-weight:800; padding:8px 12px; border-radius:8px; background:#f0fdf4; color:#166534; margin-bottom:12px; border:1px solid #bbf7d0;"></div>
 
           <div class="form-group">
             <label>Atau Masukkan URL Gambar Langsung</label>
             <input type="text" id="mediaSrcInput" class="form-control" placeholder="cth: https://images.unsplash.com/... atau galeri/gunung-cikuray/img/...">
           </div>
 
-          <img id="mediaSrcPreview" src="" alt="Preview" style="display:none; width:100%; height:160px; object-fit:cover; border-radius:8px; margin-bottom:14px;">
+          <img id="mediaSrcPreview" src="" alt="Preview" style="display:none; width:100%; height:160px; object-fit:cover; border-radius:8px; margin-bottom:14px; border:1px solid var(--admin-border);">
 
           <div class="grid-2-col">
             <div class="form-group">
