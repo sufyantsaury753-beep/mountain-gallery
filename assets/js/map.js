@@ -1,5 +1,5 @@
 /**
- * MOUNTAIN GALLERY - MAP LOGIC
+ * MOUNTAIN GALLERY - MAP LOGIC (Dinamis dengan MountainDB)
  * Interactive Leaflet Map with Basemap Switcher, Region Filters & Smooth Zoom
  */
 
@@ -8,6 +8,20 @@ let markers = [];
 let activeLayer;
 let currentFilterRegion = "all";
 let currentFilterElevation = 0;
+
+function getLiveMountains() {
+  if (typeof MountainDB !== "undefined") {
+    return MountainDB.getAll();
+  }
+  return (typeof LIST_GUNUNG !== "undefined") ? LIST_GUNUNG : [];
+}
+
+function getLiveMountainById(id) {
+  if (typeof MountainDB !== "undefined") {
+    return MountainDB.getById(id);
+  }
+  return (typeof getGunungById !== "undefined") ? getGunungById(id) : null;
+}
 
 // Tile layers configurations
 const mapLayers = {
@@ -61,15 +75,15 @@ const luxuryIcon = L.divIcon({
 
 function initMap() {
   const mapBounds = [
-    [-8.20, 105.80],
-    [-5.60, 110.20]
+    [-8.80, 105.00],
+    [-5.00, 115.00]
   ];
 
   map = L.map("map", {
     maxBounds: mapBounds,
-    maxBoundsViscosity: 1.0,
-    minZoom: 7,
-    maxZoom: 15,
+    maxBoundsViscosity: 0.8,
+    minZoom: 6,
+    maxZoom: 16,
     zoomControl: true
   }).setView([-7.12, 108.35], 8);
 
@@ -136,7 +150,9 @@ function renderMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
-  LIST_GUNUNG.forEach((gunung) => {
+  const mountains = getLiveMountains();
+
+  mountains.forEach((gunung) => {
     if (currentFilterRegion !== "all" && !gunung.region.toLowerCase().includes(currentFilterRegion.toLowerCase())) {
       return;
     }
@@ -181,13 +197,11 @@ function fokusGunung(gunung, targetMarker) {
 }
 
 function selectMountainFromMenu(mountainId) {
-  // Tutup dropdown menu hamburger
   const dropdown = document.getElementById("siteDropdown");
   if (dropdown) dropdown.classList.remove("active");
 
-  const gunung = getGunungById(mountainId);
+  const gunung = getLiveMountainById(mountainId);
   if (gunung) {
-    // Reset filter jika gunung berada di luar filter saat ini
     if (currentFilterRegion !== "all" || currentFilterElevation > 0) {
       currentFilterRegion = "all";
       currentFilterElevation = 0;
@@ -197,7 +211,6 @@ function selectMountainFromMenu(mountainId) {
       renderMarkers();
     }
 
-    // Scroll otomatis ke area peta jika di layar HP
     const mapSection = document.querySelector(".map-section");
     if (mapSection) {
       mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -235,7 +248,8 @@ function setupDrawerMenu() {
   const mountainDropdownList = document.getElementById("dropdownMountainList");
 
   if (mountainDropdownList) {
-    mountainDropdownList.innerHTML = LIST_GUNUNG.map(g => `
+    const mountains = getLiveMountains();
+    mountainDropdownList.innerHTML = mountains.map(g => `
       <button type="button" class="dropdown-mountain-item" onclick="selectMountainFromMenu('${g.id}')">
         <strong>
           <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>

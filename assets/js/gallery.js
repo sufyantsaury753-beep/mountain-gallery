@@ -1,12 +1,26 @@
 /**
  * MOUNTAIN GALLERY - DYNAMIC DETAIL & PRO LIGHTBOX LOGIC
- * Professional SVG Icons & Bulletproof Path Resolution
+ * Terintegrasi dengan MountainDB untuk live-sync data gunung & foto
  */
 
 let currentMountain = null;
 let currentMediaList = [];
 let currentMediaIndex = 0;
 let currentCategory = "all";
+
+function getLiveMountains() {
+  if (typeof MountainDB !== "undefined") {
+    return MountainDB.getAll();
+  }
+  return (typeof LIST_GUNUNG !== "undefined") ? LIST_GUNUNG : [];
+}
+
+function getLiveMountainById(id) {
+  if (typeof MountainDB !== "undefined") {
+    return MountainDB.getById(id);
+  }
+  return (typeof getGunungById !== "undefined") ? getGunungById(id) : null;
+}
 
 function getUrlParameter(name) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -15,7 +29,10 @@ function getUrlParameter(name) {
 
 function initGalleryPage() {
   const requestedId = getUrlParameter("id") || "gunung-cikuray";
-  currentMountain = getGunungById(requestedId) || DATA_GUNUNG["gunung-cikuray"];
+  const mountains = getLiveMountains();
+  currentMountain = getLiveMountainById(requestedId) || mountains[0] || (typeof DATA_GUNUNG !== "undefined" ? DATA_GUNUNG["gunung-cikuray"] : null);
+
+  if (!currentMountain) return;
 
   document.title = `${currentMountain.nama} - Mountain Gallery`;
 
@@ -49,18 +66,19 @@ function renderHeroAndSpecs() {
     smartImageFallback(this, rawCover, currentMountain.coverFallback);
   };
 
-  document.getElementById("heroAttributionText").textContent = currentMountain.atribusi;
+  document.getElementById("heroAttributionText").textContent = currentMountain.atribusi || "Dokumentasi Pendakian Indonesia";
   document.getElementById("mountainDescription").textContent = currentMountain.deskripsi;
   document.getElementById("mountainDescriptionExtra").textContent = currentMountain.deskripsiTambahan || "";
 
   // Specs Matrix
-  document.getElementById("specElevation").textContent = currentMountain.mdplText;
-  document.getElementById("specDifficulty").textContent = currentMountain.tingkatKesulitan;
-  document.getElementById("specDuration").textContent = currentMountain.estimasiWaktu;
+  document.getElementById("specElevation").textContent = currentMountain.mdplText || `${currentMountain.mdpl} Mdpl`;
+  document.getElementById("specDifficulty").textContent = currentMountain.tingkatKesulitan || "Menengah";
+  document.getElementById("specDuration").textContent = currentMountain.estimasiWaktu || "4 - 6 Jam";
 
   // Tags
   const tagsContainer = document.getElementById("tagsContainer");
-  tagsContainer.innerHTML = currentMountain.tags.map(t => `
+  const tags = currentMountain.tags || [currentMountain.region || "Indonesia"];
+  tagsContainer.innerHTML = tags.map(t => `
     <div class="tag-chip">
       <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
       ${t}
@@ -106,7 +124,9 @@ function filterMedia(category) {
 
 function renderGalleryGrid() {
   const grid = document.getElementById("galleryGrid");
-  currentMediaList = currentMountain.media.filter(m => {
+  const mediaList = currentMountain.media || [];
+  
+  currentMediaList = mediaList.filter(m => {
     if (currentCategory === "all") return true;
     return m.type === currentCategory;
   });
@@ -139,7 +159,7 @@ function renderGalleryGrid() {
             </div>
           </div>
           <div class="gallery-card-overlay">
-            <div class="gallery-card-title">${media.title}</div>
+            <div class="gallery-card-title">${media.title || "Dokumentasi Video"}</div>
           </div>
         </article>
       `;
@@ -147,25 +167,25 @@ function renderGalleryGrid() {
 
     return `
       <article class="gallery-card" onclick="openLightbox(${index})">
-        <img src="${resolvedSrc}" alt="${media.title}" onerror="smartImageFallback(this, '${media.src}')">
+        <img src="${resolvedSrc}" alt="${media.title || 'Foto'}" onerror="smartImageFallback(this, '${media.src}')">
         <div class="gallery-fallback-box">
           <span class="svg-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
-          <span>Foto ${media.title}</span>
+          <span>Foto ${media.title || ''}</span>
           <small style="opacity:0.75;margin-top:4px;">${media.src}</small>
         </div>
         <div class="gallery-card-overlay">
-          <div class="gallery-card-title">${media.title}</div>
+          <div class="gallery-card-title">${media.title || "Dokumentasi Foto"}</div>
         </div>
       </article>
     `;
   }).join("");
 }
 
-/**
- * Smart Multi-Extension Image Fallback:
- * Mencoba variasi .jpg, .jpeg, .png, .JPG jika ada perbedaan ekstensi pada GitHub Pages.
- */
 function smartImageFallback(img, originalPath, secondaryFallback) {
+  if (!originalPath) {
+    img.src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80";
+    return;
+  }
   const extensions = [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG", ".webp"];
   
   if (!img.dataset.extAttempt) {
@@ -184,14 +204,12 @@ function smartImageFallback(img, originalPath, secondaryFallback) {
     }
   }
 
-  // Jika secondary fallback tersedia
   if (secondaryFallback && !img.dataset.secondaryTried) {
     img.dataset.secondaryTried = "true";
     img.src = resolveAssetPath(secondaryFallback);
     return;
   }
 
-  // Jika semua percobaan file lokal gagal, gunakan gambar pegunungan HD yang selalu berhasil
   img.onerror = null;
   img.src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80";
 }
@@ -217,21 +235,22 @@ function openLightbox(index) {
   currentMediaIndex = index;
   updateLightboxContent();
   lightbox.classList.add("active");
+  document.body.style.overflow = "hidden";
 }
 
 function updateLightboxContent() {
   const item = currentMediaList[currentMediaIndex];
   if (!item) return;
 
-  const resolved = resolveAssetPath(item.src);
-  lightboxCounter.textContent = `${currentMediaIndex + 1} / ${currentMediaList.length}`;
+  const total = currentMediaList.length;
+  lightboxCounter.textContent = `${currentMediaIndex + 1} / ${total}`;
   lightboxCaptionTitle.textContent = item.title || "Dokumentasi Pendakian";
-  lightboxCaptionDesc.textContent = item.desc || currentMountain.nama;
+  lightboxCaptionDesc.textContent = item.desc || "";
+
+  const resolved = resolveAssetPath(item.src);
 
   if (item.type === "video") {
     lightboxImg.style.display = "none";
-    lightboxImg.src = "";
-
     lightboxVid.style.display = "block";
     lightboxVidSrc.src = resolved;
     lightboxVid.load();
@@ -239,11 +258,9 @@ function updateLightboxContent() {
   } else {
     lightboxVid.pause();
     lightboxVid.style.display = "none";
-    lightboxVidSrc.src = "";
-
     lightboxImg.style.display = "block";
     lightboxImg.src = resolved;
-    lightboxImg.alt = item.title;
+    lightboxImg.alt = item.title || "Foto Detail";
     lightboxImg.onerror = function() {
       smartImageFallback(this, item.src);
     };
@@ -251,53 +268,61 @@ function updateLightboxContent() {
 }
 
 function nextLightboxSlide() {
-  if (currentMediaList.length <= 1) return;
+  if (!currentMediaList || currentMediaList.length === 0) return;
   currentMediaIndex = (currentMediaIndex + 1) % currentMediaList.length;
   updateLightboxContent();
 }
 
 function prevLightboxSlide() {
-  if (currentMediaList.length <= 1) return;
+  if (!currentMediaList || currentMediaList.length === 0) return;
   currentMediaIndex = (currentMediaIndex - 1 + currentMediaList.length) % currentMediaList.length;
   updateLightboxContent();
 }
 
 function closeLightbox() {
   lightbox.classList.remove("active");
+  document.body.style.overflow = "";
   lightboxImg.src = "";
   lightboxVid.pause();
   lightboxVidSrc.src = "";
 }
 
 function setupLightboxListeners() {
-  document.getElementById("lightboxClose").addEventListener("click", closeLightbox);
-  document.getElementById("lightboxNext").addEventListener("click", nextLightboxSlide);
-  document.getElementById("lightboxPrev").addEventListener("click", prevLightboxSlide);
+  const closeBtn = document.getElementById("lightboxClose");
+  if (closeBtn) closeBtn.addEventListener("click", closeLightbox);
+  
+  const nextBtn = document.getElementById("lightboxNext");
+  if (nextBtn) nextBtn.addEventListener("click", nextLightboxSlide);
+  
+  const prevBtn = document.getElementById("lightboxPrev");
+  if (prevBtn) prevBtn.addEventListener("click", prevLightboxSlide);
 
-  lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) closeLightbox();
-  });
+  if (lightbox) {
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+  }
 
-  // Keyboard navigation
   document.addEventListener("keydown", (e) => {
-    if (!lightbox.classList.contains("active")) return;
+    if (!lightbox || !lightbox.classList.contains("active")) return;
     if (e.key === "Escape") closeLightbox();
     if (e.key === "ArrowRight") nextLightboxSlide();
     if (e.key === "ArrowLeft") prevLightboxSlide();
   });
 
-  // Touch swipe support for mobile
   let touchStartX = 0;
   let touchEndX = 0;
 
-  lightbox.addEventListener("touchstart", (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, false);
+  if (lightbox) {
+    lightbox.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
 
-  lightbox.addEventListener("touchend", (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleGesture();
-  }, false);
+    lightbox.addEventListener("touchend", (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleGesture();
+    }, false);
+  }
 
   function handleGesture() {
     const diff = touchEndX - touchStartX;
@@ -311,13 +336,14 @@ function setupLightboxListeners() {
 function setupDropdownMenu() {
   const mountainDropdownList = document.getElementById("dropdownMountainList");
   if (mountainDropdownList) {
-    mountainDropdownList.innerHTML = LIST_GUNUNG.map(g => `
+    const mountains = getLiveMountains();
+    mountainDropdownList.innerHTML = mountains.map(g => `
       <a class="dropdown-mountain-item" href="index.html?id=${g.id}">
         <strong>
           <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
           ${g.nama}
         </strong>
-        <span>${g.mdplText}</span>
+        <span>${g.mdplText || `${g.mdpl} Mdpl`}</span>
       </a>
     `).join("");
   }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mountain Gallery - Peta & Eksplorasi Gunung Indonesia</title>
+  <title>Mountain Gallery - Peta &amp; Eksplorasi Gunung Indonesia</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -47,7 +47,7 @@
         </button>
       </div>
 
-      <!-- Drawer Dropdown Menu (3 Menu: Beranda, Daftar Gunung, Tentang Website) -->
+      <!-- Drawer Dropdown Menu -->
       <div class="site-dropdown" id="siteDropdown">
         <div class="dropdown-header">
           <div>
@@ -77,7 +77,7 @@
           </span>
           <div>
             <strong>Pilih Destinasi Gunung</strong>
-            <small>5 Gunung di Jawa Barat &amp; Jawa Tengah</small>
+            <small>Daftar gunung di database</small>
           </div>
         </button>
 
@@ -94,6 +94,17 @@
             <small>Informasi &amp; Arsitektur Project</small>
           </div>
         </button>
+
+        <!-- Menu 4: Login Admin -->
+        <a class="dropdown-item" href="admin/index.html">
+          <span class="menu-icon-box" style="background: linear-gradient(135deg, #833ab4, #e1306c); color:#ffffff;">
+            <span class="svg-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          </span>
+          <div>
+            <strong style="color: #c13584;">Login Admin</strong>
+            <small>Kelola data gunung &amp; galeri</small>
+          </div>
+        </a>
       </div>
     </header>
 
@@ -175,8 +186,9 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Application Logic -->
+  <!-- Application Logic & Persistent Database -->
   <script src="assets/js/data.js"></script>
+  <script src="assets/js/db.js"></script>
   <script src="assets/js/map.js"></script>
 </body>
 </html>
