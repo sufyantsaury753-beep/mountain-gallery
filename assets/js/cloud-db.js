@@ -217,7 +217,8 @@ const CloudDB = (() => {
       // 2. Generate nama file unik di Cloud Storage
       const cleanMtn = mountainId.replace(/[^a-z0-9]/g, "-");
       const timestamp = Date.now();
-      const fileName = `${cleanMtn}/${cleanMtn}-${timestamp}.webp`;
+      const rand = Math.random().toString(36).substring(2, 7);
+      const fileName = `${cleanMtn}/${cleanMtn}-${timestamp}-${rand}.webp`;
 
       // 3. Upload ke Supabase Storage Bucket
       const { data: uploadData, error: uploadError } = await client.storage

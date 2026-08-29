@@ -425,12 +425,12 @@
   </div>
 
   <!-- =========================================================
-       MODAL 2: ADD / UPLOAD MEDIA
+       MODAL 2: ADD / UPLOAD MEDIA (BULK & MULTI-PHOTO SUPPORT)
        ========================================================= -->
   <div class="admin-modal-backdrop" id="modalAddMedia">
-    <div class="admin-modal-card" style="max-width:540px;">
+    <div class="admin-modal-card" style="max-width:560px;">
       <div class="admin-modal-header">
-        <h3>Upload Foto ke Cloud Storage</h3>
+        <h3 id="modalMediaHeaderTitle">Upload Foto Massal ke Cloud Storage</h3>
         <button type="button" class="btn-icon" onclick="closeAddMediaModal()" aria-label="Tutup">✕</button>
       </div>
 
@@ -438,28 +438,40 @@
         <div class="admin-modal-body">
           
           <label class="dropzone" for="mediaFileInput">
-            <input type="file" id="mediaFileInput" accept="image/*" style="display:none;">
+            <input type="file" id="mediaFileInput" accept="image/*" multiple style="display:none;">
             <div class="dropzone-icon">
               <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
             </div>
-            <h4>Klik untuk Pilih Foto dari Laptop / HP</h4>
-            <p>Otomatis dikompresi ke format WebP HD yang cepat dan tajam</p>
+            <h4>Klik untuk Pilih Banyak Foto Sekaligus (Multi-Select)</h4>
+            <p>Bisa pilih 5, 10, hingga 50+ foto sekaligus. Otomatis dikompresi ke WebP HD super cepat!</p>
           </label>
 
-          <div id="uploadStatusText" style="display:none; font-size:12px; font-weight:700; padding:10px 14px; border-radius:8px; margin-bottom:14px; border:1px solid transparent;"></div>
+          <div id="uploadStatusText" style="display:none; font-size:12px; font-weight:700; padding:10px 14px; border-radius:8px; margin-bottom:12px; border:1px solid transparent;"></div>
 
-          <div style="text-align:center; margin-bottom:14px;">
-            <img id="mediaSrcPreview" src="" alt="Pratinjau" style="max-height:160px; border-radius:10px; display:none; margin:0 auto; box-shadow:var(--admin-shadow-sm);">
+          <div id="uploadProgressBarContainer" style="display:none; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:var(--admin-primary); margin-bottom:4px;">
+              <span id="uploadProgressLabel">Mengunggah...</span>
+              <span id="uploadProgressPct">0%</span>
+            </div>
+            <div style="background:#e2e8f0; border-radius:999px; height:8px; overflow:hidden;">
+              <div id="uploadProgressBar" style="background:var(--admin-primary); width:0%; height:100%; transition:width 0.25s ease;"></div>
+            </div>
+          </div>
+
+          <!-- Thumbnail Grid Preview untuk Multi-Files -->
+          <div id="mediaMultiPreviewGrid" style="display:none; grid-template-columns:repeat(auto-fill, minmax(56px, 1fr)); gap:6px; max-height:130px; overflow-y:auto; padding:8px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:14px;"></div>
+
+          <div class="form-group">
+            <label>Judul Foto (Opsional)</label>
+            <input type="text" id="mediaTitleInput" class="form-control" placeholder="Biarkan kosong untuk judul otomatis sesuai nama gunung">
+            <small style="font-size:11px; color:var(--admin-muted); display:block; margin-top:4px;">
+              Jika dikosongkan, judul otomatis menjadi <em>[Nama Gunung]</em> (atau <em>[Nama Gunung] #1, #2...</em> untuk banyak foto).
+            </small>
           </div>
 
           <div class="form-group">
-            <label>Judul Foto</label>
-            <input type="text" id="mediaTitleInput" class="form-control" placeholder="cth: Lautan Awan Puncak Cikuray" required>
-          </div>
-
-          <div class="form-group">
-            <label>Deskripsi Foto</label>
-            <textarea id="mediaDescInput" class="form-control" rows="2" placeholder="Keterangan momen, spot foto, atau suasana..."></textarea>
+            <label>Deskripsi Foto (Opsional)</label>
+            <textarea id="mediaDescInput" class="form-control" rows="2" placeholder="Biarkan kosong untuk deskripsi otomatis (Dokumentasi [Nama Gunung])"></textarea>
           </div>
 
           <div class="form-group">
@@ -470,7 +482,7 @@
           <div style="display:flex; align-items:center; gap:8px; margin-top:8px;">
             <input type="checkbox" id="mediaIsCoverCheckbox" style="width:16px; height:16px; cursor:pointer;">
             <label for="mediaIsCoverCheckbox" style="font-size:12.5px; font-weight:700; cursor:pointer; color:var(--admin-text);">
-              Jadikan sebagai Foto Cover Utama Gunung
+              Jadikan foto pertama sebagai Foto Cover Utama Gunung
             </label>
           </div>
 

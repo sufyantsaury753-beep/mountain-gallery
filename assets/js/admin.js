@@ -318,9 +318,9 @@ async function confirmDeleteMountain(mountainId, mountainName) {
 }
 
 // =========================================================
-// 4. MEDIA MANAGER (PHOTO UPLOADS TO CLOUD STORAGE)
+// 4. MEDIA MANAGER (MULTI-PHOTO UPLOADS TO CLOUD STORAGE)
 // =========================================================
-let selectedUploadFile = null;
+let selectedUploadFiles = [];
 
 async function populateMediaMountainSelect() {
   const select = document.getElementById("mediaMountainSelect");
@@ -409,11 +409,27 @@ function openAddMediaModal() {
   if (!currentSelectedMountainId && select && select.value) {
     currentSelectedMountainId = select.value;
   }
-  selectedUploadFile = null;
+  selectedUploadFiles = [];
   document.getElementById("formAddMedia").reset();
-  document.getElementById("mediaSrcPreview").style.display = "none";
+  
+  const multiGrid = document.getElementById("mediaMultiPreviewGrid");
+  if (multiGrid) {
+    multiGrid.style.display = "none";
+    multiGrid.innerHTML = "";
+  }
+
+  const progressBox = document.getElementById("uploadProgressBarContainer");
+  if (progressBox) progressBox.style.display = "none";
+
   const status = document.getElementById("uploadStatusText");
   if (status) { status.style.display = "none"; status.textContent = ""; }
+
+  const btnSubmit = document.getElementById("btnSubmitMedia");
+  if (btnSubmit) {
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = "Upload & Simpan ke Cloud";
+  }
+
   document.getElementById("modalAddMedia").classList.add("active");
 }
 
@@ -422,25 +438,49 @@ function closeAddMediaModal() {
 }
 
 function handleImageFileSelected(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  selectedUploadFile = file;
+  const files = Array.from(e.target.files || []);
+  if (!files || files.length === 0) return;
+  selectedUploadFiles = files;
 
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const preview = document.getElementById("mediaSrcPreview");
-    preview.src = ev.target.result;
-    preview.style.display = "block";
-  };
-  reader.readAsDataURL(file);
+  const totalSizeMB = files.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024);
+  const multiGrid = document.getElementById("mediaMultiPreviewGrid");
+  
+  if (multiGrid) {
+    multiGrid.innerHTML = "";
+    multiGrid.style.display = "grid";
+
+    // Buat thumbnail preview untuk foto yang dipilih
+    files.slice(0, 24).forEach(file => {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      img.style.width = "100%";
+      img.style.aspectRatio = "1/1";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "6px";
+      multiGrid.appendChild(img);
+    });
+
+    if (files.length > 24) {
+      const more = document.createElement("div");
+      more.style.display = "flex";
+      more.style.alignItems = "center";
+      more.style.justifyContent = "center";
+      more.style.background = "#e2e8f0";
+      more.style.borderRadius = "6px";
+      more.style.fontSize = "11px";
+      more.style.fontWeight = "800";
+      more.textContent = `+${files.length - 24}`;
+      multiGrid.appendChild(more);
+    }
+  }
 
   const status = document.getElementById("uploadStatusText");
   if (status) {
     status.style.display = "block";
-    status.style.background = "#eff6ff";
-    status.style.color = "#1e40af";
-    status.style.borderColor = "#bfdbfe";
-    status.textContent = `✓ Foto "${file.name}" (${(file.size / 1024 / 1024).toFixed(2)} MB) siap dioptimalkan & diunggah ke Cloud Storage.`;
+    status.style.background = "#f0fdf4";
+    status.style.color = "#15803d";
+    status.style.borderColor = "#bbf7d0";
+    status.textContent = `✓ ${files.length} Foto Siap Diunggah (Total: ${totalSizeMB.toFixed(2)} MB). Otomatis dikompresi ke WebP HD.`;
   }
 }
 
@@ -453,39 +493,81 @@ async function handleSaveMedia(e) {
     return;
   }
 
-  const title = document.getElementById("mediaTitleInput").value.trim();
-  const desc = document.getElementById("mediaDescInput").value.trim();
+  const userTitle = document.getElementById("mediaTitleInput").value.trim();
+  const userDesc = document.getElementById("mediaDescInput").value.trim();
   const isCover = document.getElementById("mediaIsCoverCheckbox").checked;
   const rawUrl = document.getElementById("mediaSrcUrlInput").value.trim();
 
   const statusText = document.getElementById("uploadStatusText");
+  const progressContainer = document.getElementById("uploadProgressBarContainer");
+  const progressBar = document.getElementById("uploadProgressBar");
+  const progressLabel = document.getElementById("uploadProgressLabel");
+  const progressPct = document.getElementById("uploadProgressPct");
   const saveBtn = document.getElementById("btnSubmitMedia");
+
   if (saveBtn) saveBtn.disabled = true;
 
   try {
-    if (selectedUploadFile) {
-      if (statusText) {
-        statusText.style.display = "block";
-        statusText.textContent = "⏳ Sedang mengompresi & mengunggah ke Cloud Storage...";
+    const mountain = await CloudDB.getMountainById(targetMountainId);
+    const mountainName = mountain ? mountain.nama : "Gunung";
+
+    if (selectedUploadFiles && selectedUploadFiles.length > 0) {
+      const totalFiles = selectedUploadFiles.length;
+
+      if (progressContainer) {
+        progressContainer.style.display = "block";
       }
 
-      await CloudDB.uploadMediaFile(targetMountainId, selectedUploadFile, title, desc, isCover);
-      showToast("✓ Foto berhasil diunggah ke Cloud Storage CDN & tersimpan di database!", "success");
+      for (let i = 0; i < totalFiles; i++) {
+        const file = selectedUploadFiles[i];
+        const pct = Math.round(((i + 1) / totalFiles) * 100);
+
+        // Auto-generate title & desc jika user tidak mengisi
+        let currentTitle = userTitle;
+        if (!currentTitle) {
+          currentTitle = (totalFiles === 1) ? mountainName : `${mountainName} #${i + 1}`;
+        } else if (totalFiles > 1) {
+          currentTitle = `${userTitle} #${i + 1}`;
+        }
+
+        let currentDesc = userDesc;
+        if (!currentDesc) {
+          currentDesc = `Dokumentasi ${mountainName}`;
+        }
+
+        const isCoverThisFile = (isCover && i === 0);
+
+        if (statusText) {
+          statusText.style.display = "block";
+          statusText.textContent = `⏳ Mengompresi & mengunggah foto (${i + 1}/${totalFiles}): "${file.name}"...`;
+        }
+
+        if (progressLabel) progressLabel.textContent = `Foto ${i + 1} dari ${totalFiles}`;
+        if (progressPct) progressPct.textContent = `${pct}%`;
+        if (progressBar) progressBar.style.width = `${pct}%`;
+
+        await CloudDB.uploadMediaFile(targetMountainId, file, currentTitle, currentDesc, isCoverThisFile);
+      }
+
+      showToast(`✓ Berhasil mengunggah ${totalFiles} foto sekaligus ke ${mountainName}!`, "success");
     } else if (rawUrl) {
       const client = CloudDB.getClient();
+      const finalTitle = userTitle || mountainName;
+      const finalDesc = userDesc || `Dokumentasi ${mountainName}`;
+
       await client.from("mountain_media").insert({
         mountain_id: targetMountainId,
         type: "image",
         src: rawUrl,
-        title: title || "Dokumentasi Pendakian",
-        description: desc || ""
+        title: finalTitle,
+        description: finalDesc
       });
       if (isCover) {
         await client.from("mountains").update({ cover: rawUrl }).eq("id", targetMountainId);
       }
       showToast("✓ Link foto berhasil disimpan ke database!", "success");
     } else {
-      showToast("Pilih file foto dari laptop atau masukkan link gambar!", "warning");
+      showToast("Pilih file foto dari laptop/HP atau masukkan link gambar!", "warning");
       if (saveBtn) saveBtn.disabled = false;
       return;
     }
