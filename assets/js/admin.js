@@ -522,18 +522,9 @@ async function handleSaveMedia(e) {
         const file = selectedUploadFiles[i];
         const pct = Math.round(((i + 1) / totalFiles) * 100);
 
-        // Auto-generate title & desc jika user tidak mengisi
-        let currentTitle = userTitle;
-        if (!currentTitle) {
-          currentTitle = (totalFiles === 1) ? mountainName : `${mountainName} #${i + 1}`;
-        } else if (totalFiles > 1) {
-          currentTitle = `${userTitle} #${i + 1}`;
-        }
-
-        let currentDesc = userDesc;
-        if (!currentDesc) {
-          currentDesc = `Dokumentasi ${mountainName}`;
-        }
+        // Auto-generate title & desc seragam (tanpa penomoran)
+        const currentTitle = userTitle || mountainName;
+        const currentDesc = userDesc || `Dokumentasi ${mountainName}`;
 
         const isCoverThisFile = (isCover && i === 0);
 
