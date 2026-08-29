@@ -6,8 +6,8 @@
 const CLOUD_CONFIG = {
   // Masukkan Supabase Project URL & Anon Key Anda di sini
   // (Bisa juga diisi langsung melalui menu Pengaturan di Dashboard Admin)
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: "",
+  SUPABASE_URL: "https://xjpkfdalokarxmbousvj.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqcGtmZGFsb2thcnhtYm91c3ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5OTM3MjksImV4cCI6MjEwMzU2OTcyOX0.ukLS09nUcqYzn9soXrNwngYRfK7hFPnzlH0wkOR69l8",
 
   // URL Publik Bucket Cloudflare R2 / Supabase Storage
   STORAGE_BUCKET: "mountain-photos",
