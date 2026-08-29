@@ -173,15 +173,17 @@
   <!-- =========================================================
        PRO LIGHTBOX MODAL
        ========================================================= -->
-  <div class="lightbox-modal" id="lightbox">
-    <div class="lightbox-content">
-      <!-- Close button -->
-      <button type="button" class="lightbox-btn-close" id="lightboxClose" title="Tutup (Esc)">
-        <span class="svg-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
-      </button>
-
-      <!-- Counter -->
-      <div class="lightbox-counter" id="lightboxCounter">1 / 10</div>
+  <div class="pro-lightbox" id="lightbox">
+    <div class="lightbox-stage">
+      <!-- Top bar (Counter + Close) -->
+      <div class="lightbox-top-bar">
+        <div class="lightbox-counter" id="lightboxCounter">1 / 10</div>
+        <div class="lightbox-actions">
+          <button type="button" class="lightbox-ctrl-btn lightbox-close" id="lightboxClose" title="Tutup (Esc)">
+            <span class="svg-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+          </button>
+        </div>
+      </div>
 
       <!-- Navigation buttons -->
       <button type="button" class="lightbox-nav-btn lightbox-prev" id="lightboxPrev" title="Sebelumnya (Panah Kiri)">

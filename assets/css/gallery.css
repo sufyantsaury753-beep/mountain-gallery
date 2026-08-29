@@ -540,20 +540,20 @@
 /* =========================================================
    PRO LIGHTBOX (NEXT/PREV/KEYBOARD/COUNTER)
    ========================================================= */
-.pro-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(14, 6, 20, 0.88);
-  backdrop-filter: blur(12px);
+.pro-lightbox, .lightbox-modal, #lightbox {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10000 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  background: rgba(14, 6, 20, 0.92) !important;
+  backdrop-filter: blur(14px) !important;
 }
 
-.pro-lightbox.active {
-  display: flex;
+.pro-lightbox.active, .lightbox-modal.active, #lightbox.active {
+  display: flex !important;
   animation: fadeIn 0.2s ease-out;
 }
 

@@ -1,5 +1,5 @@
 /**
- * MOUNTAIN GALLERY - DYNAMIC DETAIL & PRO LIGHTBOX LOGIC (Cloud-Synced)
+ * MOUNTAIN GALLERY - DYNAMIC DETAIL & PRO LIGHTBOX LOGIC (Bulletproof Cloud Version)
  * Connected with Supabase CloudDB & local data.js fallback
  */
 
@@ -17,11 +17,18 @@ async function initGalleryPage() {
   const requestedId = getUrlParameter("id") || "gunung-cikuray";
   
   if (typeof CloudDB !== "undefined") {
-    currentMountain = await CloudDB.getMountainById(requestedId);
+    try {
+      currentMountain = await CloudDB.getMountainById(requestedId);
+    } catch (e) {
+      console.warn("CloudDB fetch error, falling back to local data:", e);
+    }
   }
   
+  if (!currentMountain && typeof getGunungById !== "undefined") {
+    currentMountain = getGunungById(requestedId);
+  }
   if (!currentMountain && typeof DATA_GUNUNG !== "undefined") {
-    currentMountain = getGunungById(requestedId) || DATA_GUNUNG["gunung-cikuray"];
+    currentMountain = DATA_GUNUNG["gunung-cikuray"];
   }
 
   if (!currentMountain) return;
@@ -36,52 +43,79 @@ async function initGalleryPage() {
 }
 
 function renderHeroAndSpecs() {
-  document.getElementById("navMountainName").textContent = `${currentMountain.nama} · ${currentMountain.region}`;
-  document.getElementById("heroTitle").textContent = currentMountain.nama;
-  document.getElementById("infoTitle").textContent = currentMountain.nama;
+  const navName = document.getElementById("navMountainName");
+  if (navName) navName.textContent = `${currentMountain.nama} · ${currentMountain.region}`;
   
-  document.getElementById("heroLocationTag").innerHTML = `
-    <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z"/><circle cx="12" cy="10" r="3"/></svg></span>
-    ${currentMountain.region}
-  `;
+  const heroTitle = document.getElementById("heroTitle");
+  if (heroTitle) heroTitle.textContent = currentMountain.nama;
+  
+  const infoTitle = document.getElementById("infoTitle");
+  if (infoTitle) infoTitle.textContent = currentMountain.nama;
+  
+  const heroLoc = document.getElementById("heroLocationTag");
+  if (heroLoc) {
+    heroLoc.innerHTML = `
+      <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+      ${currentMountain.region}
+    `;
+  }
 
-  document.getElementById("infoLocationTag").innerHTML = `
-    <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z"/><circle cx="12" cy="10" r="3"/></svg></span>
-    ${currentMountain.lokasi}
-  `;
+  const infoLoc = document.getElementById("infoLocationTag");
+  if (infoLoc) {
+    infoLoc.innerHTML = `
+      <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 5.02944 7.02944 1 12 1C16.9706 1 21 5.02944 21 10Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+      ${currentMountain.lokasi}
+    `;
+  }
 
   const coverImg = document.getElementById("heroCoverImg");
-  const rawCover = currentMountain.cover || currentMountain.coverFallback || "assets/img/gunung-cikuray.jpg";
-  coverImg.src = resolveAssetPath(rawCover);
-  coverImg.alt = `Foto Cover ${currentMountain.nama}`;
-  coverImg.onerror = function() {
-    smartImageFallback(this, rawCover, currentMountain.coverFallback);
-  };
+  if (coverImg) {
+    const rawCover = currentMountain.cover || currentMountain.coverFallback || "assets/img/gunung-cikuray.jpg";
+    coverImg.src = resolveAssetPath(rawCover);
+    coverImg.alt = `Foto Cover ${currentMountain.nama}`;
+    coverImg.onerror = function() {
+      smartImageFallback(this, rawCover, currentMountain.coverFallback);
+    };
+  }
 
-  document.getElementById("heroAttributionText").textContent = currentMountain.atribusi || "Dokumentasi Pendakian Indonesia";
-  document.getElementById("mountainDescription").textContent = currentMountain.deskripsi;
-  document.getElementById("mountainDescriptionExtra").textContent = currentMountain.deskripsiTambahan || "";
+  const attrText = document.getElementById("heroAttributionText");
+  if (attrText) attrText.textContent = currentMountain.atribusi || "Dokumentasi Pendakian Indonesia";
+  
+  const mDesc = document.getElementById("mountainDescription");
+  if (mDesc) mDesc.textContent = currentMountain.deskripsi;
+  
+  const mDescExtra = document.getElementById("mountainDescriptionExtra");
+  if (mDescExtra) mDescExtra.textContent = currentMountain.deskripsiTambahan || "";
 
   // Specs Matrix
-  document.getElementById("specElevation").textContent = currentMountain.mdplText || `${currentMountain.mdpl} Mdpl`;
-  document.getElementById("specDifficulty").textContent = currentMountain.tingkatKesulitan || "Menengah";
-  document.getElementById("specDuration").textContent = currentMountain.estimasiWaktu || "4 - 6 Jam";
+  const specElev = document.getElementById("specElevation");
+  if (specElev) specElev.textContent = currentMountain.mdplText || `${currentMountain.mdpl} Mdpl`;
+  
+  const specDiff = document.getElementById("specDifficulty");
+  if (specDiff) specDiff.textContent = currentMountain.tingkatKesulitan || "Menengah";
+  
+  const specDur = document.getElementById("specDuration");
+  if (specDur) specDur.textContent = currentMountain.estimasiWaktu || "4 - 6 Jam";
 
   // Tags
   const tagsContainer = document.getElementById("tagsContainer");
-  const tags = currentMountain.tags || [currentMountain.region || "Indonesia"];
-  tagsContainer.innerHTML = tags.map(t => `
-    <div class="tag-chip">
-      <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
-      ${t}
-    </div>
-  `).join("");
+  if (tagsContainer) {
+    const tags = currentMountain.tags || [currentMountain.region || "Indonesia"];
+    tagsContainer.innerHTML = tags.map(t => `
+      <div class="tag-chip">
+        <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
+        ${t}
+      </div>
+    `).join("");
+  }
 }
 
 function renderRoutes() {
   const routesContainer = document.getElementById("routesContainer");
+  if (!routesContainer) return;
+
   if (!currentMountain.jalurPendakian || currentMountain.jalurPendakian.length === 0) {
-    routesContainer.innerHTML = "<p style='color:#737373;'>Informasi jalur pendakian segera diperbarui.</p>";
+    routesContainer.innerHTML = "<p style='color:#737373; font-size:13px;'>Informasi jalur pendakian segera diperbarui.</p>";
     return;
   }
 
@@ -116,6 +150,8 @@ function filterMedia(category) {
 
 function renderGalleryGrid() {
   const grid = document.getElementById("galleryGrid");
+  if (!grid) return;
+
   const mediaList = currentMountain.media || [];
   
   currentMediaList = mediaList.filter(m => {
@@ -160,11 +196,6 @@ function renderGalleryGrid() {
     return `
       <article class="gallery-card" onclick="openLightbox(${index})">
         <img src="${resolvedSrc}" alt="${media.title || 'Foto'}" onerror="smartImageFallback(this, '${media.src}')">
-        <div class="gallery-fallback-box">
-          <span class="svg-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
-          <span>Foto ${media.title || ''}</span>
-          <small style="opacity:0.75;margin-top:4px;">${media.src}</small>
-        </div>
         <div class="gallery-card-overlay">
           <div class="gallery-card-title">${media.title || "Dokumentasi Foto"}</div>
         </div>
@@ -215,19 +246,15 @@ function toggleCoverAttribution() {
 /* =========================================================
    PRO LIGHTBOX ENGINE (NEXT/PREV/KEYBOARD/TOUCH SWIPE)
    ========================================================= */
-const lightbox = document.getElementById("lightbox");
-const lightboxImg = document.getElementById("lightboxImage");
-const lightboxVid = document.getElementById("lightboxVideo");
-const lightboxVidSrc = document.getElementById("lightboxVideoSource");
-const lightboxCounter = document.getElementById("lightboxCounter");
-const lightboxCaptionTitle = document.getElementById("lightboxCaptionTitle");
-const lightboxCaptionDesc = document.getElementById("lightboxCaptionDesc");
-
 function openLightbox(index) {
   if (!currentMediaList || currentMediaList.length === 0) return;
   currentMediaIndex = index;
   updateLightboxContent();
-  lightbox.classList.add("active");
+
+  const lightbox = document.getElementById("lightbox");
+  if (lightbox) {
+    lightbox.classList.add("active");
+  }
   document.body.style.overflow = "hidden";
 }
 
@@ -236,27 +263,40 @@ function updateLightboxContent() {
   if (!item) return;
 
   const total = currentMediaList.length;
-  lightboxCounter.textContent = `${currentMediaIndex + 1} / ${total}`;
-  lightboxCaptionTitle.textContent = item.title || "Dokumentasi Pendakian";
-  lightboxCaptionDesc.textContent = item.desc || "";
+  const lightboxCounter = document.getElementById("lightboxCounter");
+  const lightboxCaptionTitle = document.getElementById("lightboxCaptionTitle");
+  const lightboxCaptionDesc = document.getElementById("lightboxCaptionDesc");
+  const lightboxImg = document.getElementById("lightboxImage");
+  const lightboxVid = document.getElementById("lightboxVideo");
+  const lightboxVidSrc = document.getElementById("lightboxVideoSource");
+
+  if (lightboxCounter) lightboxCounter.textContent = `${currentMediaIndex + 1} / ${total}`;
+  if (lightboxCaptionTitle) lightboxCaptionTitle.textContent = item.title || "Dokumentasi Pendakian";
+  if (lightboxCaptionDesc) lightboxCaptionDesc.textContent = item.desc || "";
 
   const resolved = resolveAssetPath(item.src);
 
   if (item.type === "video") {
-    lightboxImg.style.display = "none";
-    lightboxVid.style.display = "block";
-    lightboxVidSrc.src = resolved;
-    lightboxVid.load();
-    lightboxVid.play().catch(() => {});
+    if (lightboxImg) lightboxImg.style.display = "none";
+    if (lightboxVid && lightboxVidSrc) {
+      lightboxVid.style.display = "block";
+      lightboxVidSrc.src = resolved;
+      lightboxVid.load();
+      lightboxVid.play().catch(() => {});
+    }
   } else {
-    lightboxVid.pause();
-    lightboxVid.style.display = "none";
-    lightboxImg.style.display = "block";
-    lightboxImg.src = resolved;
-    lightboxImg.alt = item.title || "Foto Detail";
-    lightboxImg.onerror = function() {
-      smartImageFallback(this, item.src);
-    };
+    if (lightboxVid) {
+      lightboxVid.pause();
+      lightboxVid.style.display = "none";
+    }
+    if (lightboxImg) {
+      lightboxImg.style.display = "block";
+      lightboxImg.src = resolved;
+      lightboxImg.alt = item.title || "Foto Detail";
+      lightboxImg.onerror = function() {
+        smartImageFallback(this, item.src);
+      };
+    }
   }
 }
 
@@ -273,31 +313,41 @@ function prevLightboxSlide() {
 }
 
 function closeLightbox() {
-  lightbox.classList.remove("active");
+  const lightbox = document.getElementById("lightbox");
+  if (lightbox) {
+    lightbox.classList.remove("active");
+  }
   document.body.style.overflow = "";
-  lightboxImg.src = "";
-  lightboxVid.pause();
-  lightboxVidSrc.src = "";
+
+  const lightboxImg = document.getElementById("lightboxImage");
+  if (lightboxImg) lightboxImg.src = "";
+
+  const lightboxVid = document.getElementById("lightboxVideo");
+  const lightboxVidSrc = document.getElementById("lightboxVideoSource");
+  if (lightboxVid) lightboxVid.pause();
+  if (lightboxVidSrc) lightboxVidSrc.src = "";
 }
 
 function setupLightboxListeners() {
   const closeBtn = document.getElementById("lightboxClose");
-  if (closeBtn) closeBtn.addEventListener("click", closeLightbox);
+  if (closeBtn) closeBtn.onclick = closeLightbox;
   
   const nextBtn = document.getElementById("lightboxNext");
-  if (nextBtn) nextBtn.addEventListener("click", nextLightboxSlide);
+  if (nextBtn) nextBtn.onclick = nextLightboxSlide;
   
   const prevBtn = document.getElementById("lightboxPrev");
-  if (prevBtn) prevBtn.addEventListener("click", prevLightboxSlide);
+  if (prevBtn) prevBtn.onclick = prevLightboxSlide;
 
+  const lightbox = document.getElementById("lightbox");
   if (lightbox) {
-    lightbox.addEventListener("click", (e) => {
+    lightbox.onclick = (e) => {
       if (e.target === lightbox) closeLightbox();
-    });
+    };
   }
 
   document.addEventListener("keydown", (e) => {
-    if (!lightbox || !lightbox.classList.contains("active")) return;
+    const lb = document.getElementById("lightbox");
+    if (!lb || !lb.classList.contains("active")) return;
     if (e.key === "Escape") closeLightbox();
     if (e.key === "ArrowRight") nextLightboxSlide();
     if (e.key === "ArrowLeft") prevLightboxSlide();
@@ -313,16 +363,11 @@ function setupLightboxListeners() {
 
     lightbox.addEventListener("touchend", (e) => {
       touchEndX = e.changedTouches[0].screenX;
-      handleGesture();
+      if (Math.abs(touchEndX - touchStartX) > 45) {
+        if (touchEndX - touchStartX < 0) nextLightboxSlide();
+        else prevLightboxSlide();
+      }
     }, false);
-  }
-
-  function handleGesture() {
-    const diff = touchEndX - touchStartX;
-    if (Math.abs(diff) > 45) {
-      if (diff < 0) nextLightboxSlide();
-      else prevLightboxSlide();
-    }
   }
 }
 
@@ -332,8 +377,13 @@ async function setupDropdownMenu() {
 
   let mountains = [];
   if (typeof CloudDB !== "undefined") {
-    mountains = await CloudDB.getAllMountains();
-  } else if (typeof LIST_GUNUNG !== "undefined") {
+    try {
+      mountains = await CloudDB.getAllMountains();
+    } catch (e) {
+      console.warn("Dropdown CloudDB fallback:", e);
+    }
+  }
+  if ((!mountains || mountains.length === 0) && typeof LIST_GUNUNG !== "undefined") {
     mountains = LIST_GUNUNG;
   }
 
