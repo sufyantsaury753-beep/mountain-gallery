@@ -211,26 +211,43 @@ const CloudDB = (() => {
       const cfg = getActiveCloudConfig();
       const bucketName = cfg.STORAGE_BUCKET || "mountain-photos";
 
-      // 1. Kompresi gambar ke WebP (Quality 0.85)
-      const compressedBlob = await this.compressImageToBlob(file, 1600, 1600, 0.85);
-
-      // 2. Generate nama file unik di Cloud Storage
       const cleanMtn = mountainId.replace(/[^a-z0-9]/g, "-");
       const timestamp = Date.now();
       const rand = Math.random().toString(36).substring(2, 7);
-      const fileName = `${cleanMtn}/${cleanMtn}-${timestamp}-${rand}.webp`;
+
+      const isVideo = file.type ? file.type.startsWith("video/") : Boolean(file.name && file.name.match(/\.(mp4|webm|mov|mkv|avi|m4v)$/i));
+
+      let uploadBlob;
+      let fileName;
+      let contentType;
+      let mediaType = "image";
+
+      if (isVideo) {
+        uploadBlob = file;
+        mediaType = "video";
+        const extMatch = file.name ? file.name.match(/\.([a-z0-9]+)$/i) : null;
+        const ext = extMatch ? extMatch[1].toLowerCase() : "mp4";
+        fileName = `${cleanMtn}/${cleanMtn}-video-${timestamp}-${rand}.${ext}`;
+        contentType = file.type || (ext === "webm" ? "video/webm" : ext === "mov" ? "video/quicktime" : "video/mp4");
+      } else {
+        // 1. Kompresi gambar ke WebP HD (Quality 0.85)
+        uploadBlob = await this.compressImageToBlob(file, 1600, 1600, 0.85);
+        fileName = `${cleanMtn}/${cleanMtn}-${timestamp}-${rand}.webp`;
+        contentType = "image/webp";
+        mediaType = "image";
+      }
 
       // 3. Upload ke Supabase Storage Bucket
       const { data: uploadData, error: uploadError } = await client.storage
         .from(bucketName)
-        .upload(fileName, compressedBlob, {
-          contentType: "image/webp",
+        .upload(fileName, uploadBlob, {
+          contentType: contentType,
           upsert: true
         });
 
       if (uploadError) {
         console.error("Storage upload error:", uploadError);
-        throw new Error(`Gagal upload foto ke Storage: ${uploadError.message}`);
+        throw new Error(`Gagal upload dokumen ke Storage: ${uploadError.message}`);
       }
 
       // 4. Ambil Public URL
@@ -245,10 +262,10 @@ const CloudDB = (() => {
         .from("mountain_media")
         .insert({
           mountain_id: mountainId,
-          type: "image",
+          type: mediaType,
           src: publicUrl,
-          title: title || "Dokumentasi Pendakian",
-          category: "image",
+          title: title || (mediaType === "video" ? "Dokumentasi Video" : "Dokumentasi Pendakian"),
+          category: mediaType,
           description: desc || ""
         })
         .select()

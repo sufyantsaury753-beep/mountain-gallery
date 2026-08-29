@@ -443,21 +443,61 @@ function handleImageFileSelected(e) {
   selectedUploadFiles = files;
 
   const totalSizeMB = files.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024);
+  const vidCount = files.filter(f => f.type.startsWith("video/") || f.name.match(/\.(mp4|webm|mov|mkv|avi)$/i)).length;
+  const imgCount = files.length - vidCount;
   const multiGrid = document.getElementById("mediaMultiPreviewGrid");
   
   if (multiGrid) {
     multiGrid.innerHTML = "";
     multiGrid.style.display = "grid";
 
-    // Buat thumbnail preview untuk foto yang dipilih
+    // Buat thumbnail preview untuk foto & video yang dipilih
     files.slice(0, 24).forEach(file => {
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-      img.style.width = "100%";
-      img.style.aspectRatio = "1/1";
-      img.style.objectFit = "cover";
-      img.style.borderRadius = "6px";
-      multiGrid.appendChild(img);
+      const isVideo = file.type.startsWith("video/") || file.name.match(/\.(mp4|webm|mov|mkv|avi)$/i);
+      
+      if (isVideo) {
+        const vidBox = document.createElement("div");
+        vidBox.style.position = "relative";
+        vidBox.style.width = "100%";
+        vidBox.style.aspectRatio = "1/1";
+        vidBox.style.background = "#0f172a";
+        vidBox.style.borderRadius = "6px";
+        vidBox.style.overflow = "hidden";
+        vidBox.style.display = "flex";
+        vidBox.style.alignItems = "center";
+        vidBox.style.justifyContent = "center";
+
+        const video = document.createElement("video");
+        video.src = URL.createObjectURL(file);
+        video.style.width = "100%";
+        video.style.height = "100%";
+        video.style.objectFit = "cover";
+        video.muted = true;
+
+        const badge = document.createElement("span");
+        badge.textContent = "VIDEO";
+        badge.style.position = "absolute";
+        badge.style.bottom = "2px";
+        badge.style.right = "2px";
+        badge.style.background = "rgba(0,0,0,0.75)";
+        badge.style.color = "#ffffff";
+        badge.style.fontSize = "7.5px";
+        badge.style.fontWeight = "800";
+        badge.style.padding = "1px 4px";
+        badge.style.borderRadius = "3px";
+
+        vidBox.appendChild(video);
+        vidBox.appendChild(badge);
+        multiGrid.appendChild(vidBox);
+      } else {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.style.width = "100%";
+        img.style.aspectRatio = "1/1";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "6px";
+        multiGrid.appendChild(img);
+      }
     });
 
     if (files.length > 24) {
@@ -480,7 +520,7 @@ function handleImageFileSelected(e) {
     status.style.background = "#f0fdf4";
     status.style.color = "#15803d";
     status.style.borderColor = "#bbf7d0";
-    status.textContent = `✓ ${files.length} Foto Siap Diunggah (Total: ${totalSizeMB.toFixed(2)} MB). Otomatis dikompresi ke WebP HD.`;
+    status.textContent = `✓ ${files.length} Dokumen Siap Diunggah (${imgCount} Foto, ${vidCount} Video · Total: ${totalSizeMB.toFixed(2)} MB).`;
   }
 }
 
@@ -530,35 +570,37 @@ async function handleSaveMedia(e) {
 
         if (statusText) {
           statusText.style.display = "block";
-          statusText.textContent = `⏳ Mengompresi & mengunggah foto (${i + 1}/${totalFiles}): "${file.name}"...`;
+          statusText.textContent = `⏳ Mengunggah dokumen (${i + 1}/${totalFiles}): "${file.name}"...`;
         }
 
-        if (progressLabel) progressLabel.textContent = `Foto ${i + 1} dari ${totalFiles}`;
+        if (progressLabel) progressLabel.textContent = `Dokumen ${i + 1} dari ${totalFiles}`;
         if (progressPct) progressPct.textContent = `${pct}%`;
         if (progressBar) progressBar.style.width = `${pct}%`;
 
         await CloudDB.uploadMediaFile(targetMountainId, file, currentTitle, currentDesc, isCoverThisFile);
       }
 
-      showToast(`✓ Berhasil mengunggah ${totalFiles} foto sekaligus ke ${mountainName}!`, "success");
+      showToast(`✓ Berhasil mengunggah ${totalFiles} dokumen ke ${mountainName}!`, "success");
     } else if (rawUrl) {
       const client = CloudDB.getClient();
       const finalTitle = userTitle || mountainName;
       const finalDesc = userDesc || `Dokumentasi ${mountainName}`;
+      const isVidUrl = rawUrl.match(/\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i) !== null;
 
       await client.from("mountain_media").insert({
         mountain_id: targetMountainId,
-        type: "image",
+        type: isVidUrl ? "video" : "image",
         src: rawUrl,
         title: finalTitle,
-        description: finalDesc
+        description: finalDesc,
+        category: isVidUrl ? "video" : "image"
       });
       if (isCover) {
         await client.from("mountains").update({ cover: rawUrl }).eq("id", targetMountainId);
       }
-      showToast("✓ Link foto berhasil disimpan ke database!", "success");
+      showToast("✓ Link dokumen berhasil disimpan ke database!", "success");
     } else {
-      showToast("Pilih file foto dari laptop/HP atau masukkan link gambar!", "warning");
+      showToast("Pilih file dokumen (foto/video) dari laptop/HP atau masukkan link!", "warning");
       if (saveBtn) saveBtn.disabled = false;
       return;
     }
