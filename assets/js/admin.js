@@ -207,8 +207,8 @@ async function openEditMountainModal(mountainId) {
   document.getElementById("mMdpl").value = mountain.mdpl;
   document.getElementById("mLokasi").value = mountain.lokasi;
   document.getElementById("mRegion").value = mountain.region;
-  document.getElementById("mLat").value = mountain.lat;
-  document.getElementById("mLng").value = mountain.lng;
+  document.getElementById("mLat").value = mountain.lat !== undefined && mountain.lat !== null ? String(mountain.lat) : "";
+  document.getElementById("mLng").value = mountain.lng !== undefined && mountain.lng !== null ? String(mountain.lng) : "";
   document.getElementById("mKesulitan").value = mountain.tingkatKesulitan;
   document.getElementById("mEstimasi").value = mountain.estimasiWaktu;
   document.getElementById("mSuhu").value = mountain.suhuPuncak;
@@ -248,6 +248,13 @@ function addRouteRow(nama = "", waktu = "", status = "") {
   container.appendChild(div);
 }
 
+function parseCoord(val) {
+  if (val === null || val === undefined || val === "") return 0;
+  const cleanStr = String(val).replace(",", ".").trim();
+  const num = parseFloat(cleanStr);
+  return isNaN(num) ? 0 : num;
+}
+
 async function handleSaveMountain(e) {
   e.preventDefault();
 
@@ -268,11 +275,11 @@ async function handleSaveMountain(e) {
   const mountainData = {
     id: document.getElementById("mountainIdInput").value || undefined,
     nama: document.getElementById("mNama").value.trim(),
-    mdpl: Number(document.getElementById("mMdpl").value),
+    mdpl: Number(document.getElementById("mMdpl").value) || 0,
     lokasi: document.getElementById("mLokasi").value.trim(),
     region: document.getElementById("mRegion").value,
-    lat: Number(document.getElementById("mLat").value),
-    lng: Number(document.getElementById("mLng").value),
+    lat: parseCoord(document.getElementById("mLat").value),
+    lng: parseCoord(document.getElementById("mLng").value),
     tingkatKesulitan: document.getElementById("mKesulitan").value,
     estimasiWaktu: document.getElementById("mEstimasi").value.trim(),
     suhuPuncak: document.getElementById("mSuhu").value.trim(),
