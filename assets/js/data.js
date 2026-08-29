@@ -3,6 +3,12 @@
  * Seluruh data lokasi, ketinggian, deskripsi, jalur pendakian, dan media disimpan di sini.
  */
 
+try {
+  localStorage.removeItem("mountain_gallery_db_v2");
+  localStorage.removeItem("mountain_gallery_auth_session");
+  localStorage.removeItem("mountain_gallery_config");
+} catch(e) {}
+
 const DATA_GUNUNG = {
   "gunung-cikuray": {
     id: "gunung-cikuray",

@@ -1,5 +1,5 @@
 /**
- * MOUNTAIN GALLERY - MAP LOGIC (Dinamis dengan MountainDB)
+ * MOUNTAIN GALLERY - MAP LOGIC (Clean & Bulletproof)
  * Interactive Leaflet Map with Basemap Switcher, Region Filters & Smooth Zoom
  */
 
@@ -8,20 +8,6 @@ let markers = [];
 let activeLayer;
 let currentFilterRegion = "all";
 let currentFilterElevation = 0;
-
-function getLiveMountains() {
-  if (typeof MountainDB !== "undefined") {
-    return MountainDB.getAll();
-  }
-  return (typeof LIST_GUNUNG !== "undefined") ? LIST_GUNUNG : [];
-}
-
-function getLiveMountainById(id) {
-  if (typeof MountainDB !== "undefined") {
-    return MountainDB.getById(id);
-  }
-  return (typeof getGunungById !== "undefined") ? getGunungById(id) : null;
-}
 
 // Tile layers configurations
 const mapLayers = {
@@ -150,9 +136,7 @@ function renderMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
-  const mountains = getLiveMountains();
-
-  mountains.forEach((gunung) => {
+  LIST_GUNUNG.forEach((gunung) => {
     if (currentFilterRegion !== "all" && !gunung.region.toLowerCase().includes(currentFilterRegion.toLowerCase())) {
       return;
     }
@@ -200,7 +184,7 @@ function selectMountainFromMenu(mountainId) {
   const dropdown = document.getElementById("siteDropdown");
   if (dropdown) dropdown.classList.remove("active");
 
-  const gunung = getLiveMountainById(mountainId);
+  const gunung = getGunungById(mountainId);
   if (gunung) {
     if (currentFilterRegion !== "all" || currentFilterElevation > 0) {
       currentFilterRegion = "all";
@@ -248,8 +232,7 @@ function setupDrawerMenu() {
   const mountainDropdownList = document.getElementById("dropdownMountainList");
 
   if (mountainDropdownList) {
-    const mountains = getLiveMountains();
-    mountainDropdownList.innerHTML = mountains.map(g => `
+    mountainDropdownList.innerHTML = LIST_GUNUNG.map(g => `
       <button type="button" class="dropdown-mountain-item" onclick="selectMountainFromMenu('${g.id}')">
         <strong>
           <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>

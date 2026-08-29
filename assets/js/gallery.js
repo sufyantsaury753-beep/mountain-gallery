@@ -1,26 +1,12 @@
 /**
- * MOUNTAIN GALLERY - DYNAMIC DETAIL & PRO LIGHTBOX LOGIC
- * Terintegrasi dengan MountainDB untuk live-sync data gunung & foto
+ * MOUNTAIN GALLERY - DYNAMIC DETAIL & PRO LIGHTBOX LOGIC (Clean Version)
+ * Menggunakan data.js murni sebagai single source of truth tanpa database browser
  */
 
 let currentMountain = null;
 let currentMediaList = [];
 let currentMediaIndex = 0;
 let currentCategory = "all";
-
-function getLiveMountains() {
-  if (typeof MountainDB !== "undefined") {
-    return MountainDB.getAll();
-  }
-  return (typeof LIST_GUNUNG !== "undefined") ? LIST_GUNUNG : [];
-}
-
-function getLiveMountainById(id) {
-  if (typeof MountainDB !== "undefined") {
-    return MountainDB.getById(id);
-  }
-  return (typeof getGunungById !== "undefined") ? getGunungById(id) : null;
-}
 
 function getUrlParameter(name) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -29,8 +15,7 @@ function getUrlParameter(name) {
 
 function initGalleryPage() {
   const requestedId = getUrlParameter("id") || "gunung-cikuray";
-  const mountains = getLiveMountains();
-  currentMountain = getLiveMountainById(requestedId) || mountains[0] || (typeof DATA_GUNUNG !== "undefined" ? DATA_GUNUNG["gunung-cikuray"] : null);
+  currentMountain = getGunungById(requestedId) || DATA_GUNUNG["gunung-cikuray"];
 
   if (!currentMountain) return;
 
@@ -182,7 +167,8 @@ function renderGalleryGrid() {
 }
 
 function smartImageFallback(img, originalPath, secondaryFallback) {
-  if (!originalPath) {
+  if (!originalPath || originalPath.startsWith("data:")) {
+    img.onerror = null;
     img.src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80";
     return;
   }
@@ -336,14 +322,13 @@ function setupLightboxListeners() {
 function setupDropdownMenu() {
   const mountainDropdownList = document.getElementById("dropdownMountainList");
   if (mountainDropdownList) {
-    const mountains = getLiveMountains();
-    mountainDropdownList.innerHTML = mountains.map(g => `
+    mountainDropdownList.innerHTML = LIST_GUNUNG.map(g => `
       <a class="dropdown-mountain-item" href="index.html?id=${g.id}">
         <strong>
           <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
           ${g.nama}
         </strong>
-        <span>${g.mdplText || `${g.mdpl} Mdpl`}</span>
+        <span>${g.mdplText}</span>
       </a>
     `).join("");
   }
