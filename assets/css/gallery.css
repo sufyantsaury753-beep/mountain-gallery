@@ -186,10 +186,12 @@
   margin-top: 6px;
 }
 
-.mountain-desc {
+.mountain-desc, #mountainDescription, #mountainDescriptionExtra, .mountain-info-card p {
   color: var(--text-muted);
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14.5px;
+  line-height: 1.75;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 /* Quick Specs Matrix */
@@ -728,21 +730,28 @@
 }
 
 @media (max-width: 680px) {
-  .gallery-section-bar {
+  /* Sembunyikan tombol Kembali ke Peta di HP */
+  .nav-btn, .desktop-only, .topbar-actions .nav-btn {
+    display: none !important;
+  }
+
+  .gallery-header-row, .gallery-section-bar {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    margin-top: 18px;
+    margin-bottom: 16px;
   }
 
-  .media-filters {
+  .media-filter-bar, .media-filters {
     width: 100%;
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 4px;
+    padding-bottom: 6px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  .media-filters::-webkit-scrollbar { display: none; }
+  .media-filter-bar::-webkit-scrollbar, .media-filters::-webkit-scrollbar { display: none; }
 
   .media-filter-btn {
     padding: 6px 14px;
@@ -800,6 +809,36 @@
   .spec-item-icon .svg-icon {
     width: 15px !important;
     height: 15px !important;
+  }
+
+  /* Kartu Jalur Pendakian yang Compact & Elegan di Layar HP */
+  .routes-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .route-card {
+    padding: 10px 14px !important;
+    border-radius: var(--radius-sm) !important;
+    gap: 3px !important;
+  }
+
+  .route-card-title {
+    font-size: 13px !important;
+  }
+
+  .route-card-title .svg-icon {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .route-card-meta {
+    font-size: 11px !important;
+  }
+
+  .route-card-meta span .svg-icon {
+    width: 11px !important;
+    height: 11px !important;
   }
   
   .lightbox-prev {
