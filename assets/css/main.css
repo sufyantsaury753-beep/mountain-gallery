@@ -366,7 +366,7 @@ body::before {
 
 .dropdown-mountain-list {
   display: none;
-  max-height: 240px;
+  max-height: 340px;
   overflow-y: auto;
   padding: 8px;
   margin: -4px 0 10px 0;

@@ -243,6 +243,10 @@ function setupFilters() {
 
 function setupDrawerMenu() {
   const mountainDropdownList = document.getElementById("dropdownMountainList");
+  const countSub = document.getElementById("dropdownMountainCountSubtitle");
+  if (countSub && cachedMountains) {
+    countSub.textContent = `${cachedMountains.length} Destinasi Gunung Terdaftar`;
+  }
 
   if (mountainDropdownList) {
     mountainDropdownList.innerHTML = cachedMountains.map(g => `
@@ -251,7 +255,7 @@ function setupDrawerMenu() {
           <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
           ${g.nama}
         </strong>
-        <span>${g.mdplText}</span>
+        <span>${g.mdplText || (g.mdpl ? `${g.mdpl.toLocaleString()} Mdpl` : '')}</span>
       </button>
     `).join("");
   }

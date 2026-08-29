@@ -101,7 +101,7 @@ async function renderDashboardOverview() {
 
   const recentContainer = document.getElementById("recentMountainsList");
   if (recentContainer) {
-    recentContainer.innerHTML = mountains.slice(0, 5).map(m => `
+    recentContainer.innerHTML = mountains.map(m => `
       <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--admin-border);">
         <div style="display:flex; align-items:center; gap:12px;">
           <img src="${resolveAssetPath(m.cover)}" style="width:40px; height:40px; border-radius:10px; object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=100'">
