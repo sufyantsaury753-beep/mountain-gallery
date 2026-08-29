@@ -372,15 +372,38 @@
             </div>
           </div>
 
-          <div class="grid-2-col">
-            <div class="form-group">
-              <label>Suhu Puncak</label>
-              <input type="text" id="mSuhu" class="form-control" placeholder="cth: 8°C - 14°C">
+          <div class="form-group">
+            <label>Suhu Puncak</label>
+            <input type="text" id="mSuhu" class="form-control" placeholder="cth: 8°C - 14°C (atau 14°C - 19°C)">
+          </div>
+
+          <!-- Cover Image Upload Area -->
+          <div class="form-group" style="margin-top:8px;">
+            <label style="font-weight:800; color:var(--admin-primary); display:flex; align-items:center; gap:6px;">
+              <span class="svg-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
+              Foto Cover Utama Gunung
+            </label>
+
+            <!-- Dropzone Cover -->
+            <label class="dropzone" for="mCoverFileInput" style="padding:16px 20px; cursor:pointer; margin-bottom:10px;">
+              <input type="file" id="mCoverFileInput" accept="image/*" style="display:none;">
+              <div class="dropzone-icon" style="width:40px; height:40px; margin-bottom:8px;">
+                <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
+              </div>
+              <h4 style="font-size:13.5px; margin-bottom:4px;">Klik untuk Pilih Foto Cover (Galeri HP / Laptop)</h4>
+              <p style="font-size:11.5px;">Otomatis dikompresi ke WebP HD &amp; diunggah ke Cloud Storage</p>
+            </label>
+
+            <!-- Live Cover Preview Box -->
+            <div id="mCoverPreviewBox" style="display:none; position:relative; margin-bottom:12px; border-radius:12px; overflow:hidden; border:1.5px solid var(--admin-border); background:#0f172a; max-height:200px;">
+              <img id="mCoverPreviewImg" src="" alt="Cover Preview" style="width:100%; height:200px; object-fit:cover; display:block;">
+              <button type="button" class="btn-admin" style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.75); color:#fff; border:none; padding:6px 12px; font-size:11px; border-radius:8px;" onclick="document.getElementById('mCoverFileInput').click()">
+                📷 Ganti Foto Cover
+              </button>
             </div>
-            <div class="form-group">
-              <label>URL Foto Cover Utama</label>
-              <input type="text" id="mCover" class="form-control" placeholder="URL foto atau path">
-            </div>
+
+            <!-- Fallback URL Input -->
+            <input type="text" id="mCover" class="form-control" placeholder="Atau masukkan link gambar luar (Opsional, cth: https://images.unsplash.com/...)" style="font-size:12px;">
           </div>
 
           <div class="form-group">

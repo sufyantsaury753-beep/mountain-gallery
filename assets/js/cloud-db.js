@@ -287,6 +287,42 @@ const CloudDB = (() => {
       };
     },
 
+    async uploadCoverFile(mountainId, file) {
+      const client = getClient();
+      if (!client || !isConnected()) {
+        throw new Error("Supabase Cloud belum terhubung.");
+      }
+
+      const cfg = getActiveCloudConfig();
+      const bucketName = cfg.STORAGE_BUCKET || "mountain-photos";
+
+      const cleanMtn = (mountainId || "gunung").replace(/[^a-z0-9]/g, "-");
+      const timestamp = Date.now();
+      const rand = Math.random().toString(36).substring(2, 7);
+
+      // Kompresi foto cover ke WebP HD (Quality 0.88, max 1920x1200)
+      const compressedBlob = await this.compressImageToBlob(file, 1920, 1200, 0.88);
+      const fileName = `${cleanMtn}/cover-${timestamp}-${rand}.webp`;
+
+      const { data: uploadData, error: uploadError } = await client.storage
+        .from(bucketName)
+        .upload(fileName, compressedBlob, {
+          contentType: "image/webp",
+          upsert: true
+        });
+
+      if (uploadError) {
+        console.error("Cover upload error:", uploadError);
+        throw new Error(`Gagal upload cover ke Storage: ${uploadError.message}`);
+      }
+
+      const { data: urlData } = client.storage
+        .from(bucketName)
+        .getPublicUrl(fileName);
+
+      return urlData.publicUrl;
+    },
+
     async deleteMedia(mediaId, srcUrl) {
       const client = getClient();
       if (!client || !isConnected()) throw new Error("Supabase belum terhubung.");

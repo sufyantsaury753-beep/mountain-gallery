@@ -182,12 +182,33 @@ async function renderMountainTable() {
   `).join("");
 }
 
+let selectedCoverFile = null;
+
+function handleCoverFileSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  selectedCoverFile = file;
+
+  const previewBox = document.getElementById("mCoverPreviewBox");
+  const previewImg = document.getElementById("mCoverPreviewImg");
+  if (previewBox && previewImg) {
+    previewImg.src = URL.createObjectURL(file);
+    previewBox.style.display = "block";
+  }
+}
+
 function openAddMountainModal() {
   currentEditingMountainId = null;
+  selectedCoverFile = null;
   document.getElementById("modalMountainTitle").textContent = "Tambah Destinasi Gunung Baru";
   document.getElementById("formMountain").reset();
   document.getElementById("mountainIdInput").value = "";
   
+  const previewBox = document.getElementById("mCoverPreviewBox");
+  if (previewBox) previewBox.style.display = "none";
+  const coverFileInput = document.getElementById("mCoverFileInput");
+  if (coverFileInput) coverFileInput.value = "";
+
   const container = document.getElementById("routesRepeaterContainer");
   container.innerHTML = "";
   addRouteRow();
@@ -200,6 +221,7 @@ async function openEditMountainModal(mountainId) {
   if (!mountain) return;
 
   currentEditingMountainId = mountainId;
+  selectedCoverFile = null;
   document.getElementById("modalMountainTitle").textContent = `Edit Data ${mountain.nama}`;
   
   document.getElementById("mountainIdInput").value = mountain.id;
@@ -212,11 +234,23 @@ async function openEditMountainModal(mountainId) {
   document.getElementById("mKesulitan").value = mountain.tingkatKesulitan;
   document.getElementById("mEstimasi").value = mountain.estimasiWaktu;
   document.getElementById("mSuhu").value = mountain.suhuPuncak;
-  document.getElementById("mCover").value = mountain.cover;
+  document.getElementById("mCover").value = mountain.cover || "";
   document.getElementById("mAtribusi").value = mountain.atribusi || "";
   document.getElementById("mDeskripsi").value = mountain.deskripsi;
   document.getElementById("mDeskripsiTambahan").value = mountain.deskripsiTambahan || "";
   document.getElementById("mTags").value = (mountain.tags || []).join(", ");
+
+  const previewBox = document.getElementById("mCoverPreviewBox");
+  const previewImg = document.getElementById("mCoverPreviewImg");
+  const coverFileInput = document.getElementById("mCoverFileInput");
+  if (coverFileInput) coverFileInput.value = "";
+
+  if (mountain.cover && previewBox && previewImg) {
+    previewImg.src = resolveAssetPath(mountain.cover);
+    previewBox.style.display = "block";
+  } else if (previewBox) {
+    previewBox.style.display = "none";
+  }
 
   const container = document.getElementById("routesRepeaterContainer");
   container.innerHTML = "";
@@ -271,10 +305,26 @@ async function handleSaveMountain(e) {
   });
 
   const rawTags = document.getElementById("mTags").value.split(",").map(t => t.trim()).filter(Boolean);
+  const mountainIdVal = document.getElementById("mountainIdInput").value || undefined;
+  const mountainNameVal = document.getElementById("mNama").value.trim();
+
+  let coverUrl = document.getElementById("mCover").value.trim();
+
+  // Jika user memilih file cover baru dari HP / Laptop
+  if (selectedCoverFile) {
+    try {
+      showToast("⏳ Mengompresi & mengunggah foto cover ke Cloud Storage...", "info");
+      const targetId = mountainIdVal || mountainNameVal.toLowerCase().replace(/[^a-z0-9]/g, "-");
+      coverUrl = await CloudDB.uploadCoverFile(targetId, selectedCoverFile);
+    } catch (coverErr) {
+      showToast(`Gagal upload cover: ${coverErr.message}`, "error");
+      return;
+    }
+  }
 
   const mountainData = {
-    id: document.getElementById("mountainIdInput").value || undefined,
-    nama: document.getElementById("mNama").value.trim(),
+    id: mountainIdVal,
+    nama: mountainNameVal,
     mdpl: Number(document.getElementById("mMdpl").value) || 0,
     lokasi: document.getElementById("mLokasi").value.trim(),
     region: document.getElementById("mRegion").value,
@@ -283,7 +333,7 @@ async function handleSaveMountain(e) {
     tingkatKesulitan: document.getElementById("mKesulitan").value,
     estimasiWaktu: document.getElementById("mEstimasi").value.trim(),
     suhuPuncak: document.getElementById("mSuhu").value.trim(),
-    cover: document.getElementById("mCover").value.trim(),
+    cover: coverUrl,
     atribusi: document.getElementById("mAtribusi").value.trim(),
     deskripsi: document.getElementById("mDeskripsi").value.trim(),
     deskripsiTambahan: document.getElementById("mDeskripsiTambahan").value.trim(),
@@ -765,6 +815,9 @@ function setupEventListeners() {
 
   const fileInput = document.getElementById("mediaFileInput");
   if (fileInput) fileInput.addEventListener("change", handleImageFileSelected);
+
+  const coverFileInput = document.getElementById("mCoverFileInput");
+  if (coverFileInput) coverFileInput.addEventListener("change", handleCoverFileSelected);
 
   const searchInput = document.getElementById("mountainSearchInput");
   if (searchInput) searchInput.addEventListener("input", renderMountainTable);
