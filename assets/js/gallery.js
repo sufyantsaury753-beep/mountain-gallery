@@ -173,7 +173,7 @@ function renderGalleryGrid() {
 
     if (media.type === "video") {
       return `
-        <article class="gallery-card" onclick="openLightbox(${index})">
+        <article class="gallery-card" data-index="${index}" role="button" tabindex="0" aria-label="Buka video ${media.title || ''}">
           <video muted preload="metadata">
             <source src="${resolvedSrc}" type="video/mp4">
           </video>
@@ -194,7 +194,7 @@ function renderGalleryGrid() {
     }
 
     return `
-      <article class="gallery-card" onclick="openLightbox(${index})">
+      <article class="gallery-card" data-index="${index}" role="button" tabindex="0" aria-label="Buka foto ${media.title || ''}">
         <img src="${resolvedSrc}" alt="${media.title || 'Foto'}" onerror="smartImageFallback(this, '${media.src}')">
         <div class="gallery-card-overlay">
           <div class="gallery-card-title">${media.title || "Dokumentasi Foto"}</div>
@@ -202,6 +202,15 @@ function renderGalleryGrid() {
       </article>
     `;
   }).join("");
+
+  // Attach touch and click events directly to cards
+  grid.querySelectorAll(".gallery-card").forEach(card => {
+    const idx = parseInt(card.getAttribute("data-index"), 10);
+    card.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openLightbox(idx);
+    });
+  });
 }
 
 function smartImageFallback(img, originalPath, secondaryFallback) {
@@ -441,3 +450,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// Window Exports
+if (typeof window !== "undefined") {
+  window.openLightbox = openLightbox;
+  window.closeLightbox = closeLightbox;
+  window.nextLightboxSlide = nextLightboxSlide;
+  window.prevLightboxSlide = prevLightboxSlide;
+  window.filterMedia = filterMedia;
+  window.toggleMenu = toggleMenu;
+  window.toggleMountainList = toggleMountainList;
+  window.openAboutModal = openAboutModal;
+  window.closeAboutModal = closeAboutModal;
+}
