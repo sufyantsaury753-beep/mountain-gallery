@@ -1,6 +1,6 @@
 /**
- * MOUNTAIN GALLERY - DYNAMIC DETAIL & PRO LIGHTBOX LOGIC (Clean Version)
- * Menggunakan data.js murni sebagai single source of truth tanpa database browser
+ * MOUNTAIN GALLERY - DYNAMIC DETAIL & PRO LIGHTBOX LOGIC (Cloud-Synced)
+ * Connected with Supabase CloudDB & local data.js fallback
  */
 
 let currentMountain = null;
@@ -13,9 +13,16 @@ function getUrlParameter(name) {
   return urlParams.get(name) || urlParams.get("mountain");
 }
 
-function initGalleryPage() {
+async function initGalleryPage() {
   const requestedId = getUrlParameter("id") || "gunung-cikuray";
-  currentMountain = getGunungById(requestedId) || DATA_GUNUNG["gunung-cikuray"];
+  
+  if (typeof CloudDB !== "undefined") {
+    currentMountain = await CloudDB.getMountainById(requestedId);
+  }
+  
+  if (!currentMountain && typeof DATA_GUNUNG !== "undefined") {
+    currentMountain = getGunungById(requestedId) || DATA_GUNUNG["gunung-cikuray"];
+  }
 
   if (!currentMountain) return;
 
@@ -167,7 +174,7 @@ function renderGalleryGrid() {
 }
 
 function smartImageFallback(img, originalPath, secondaryFallback) {
-  if (!originalPath || originalPath.startsWith("data:")) {
+  if (!originalPath || originalPath.startsWith("data:") || originalPath.startsWith("http://") || originalPath.startsWith("https://")) {
     img.onerror = null;
     img.src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80";
     return;
@@ -319,19 +326,26 @@ function setupLightboxListeners() {
   }
 }
 
-function setupDropdownMenu() {
+async function setupDropdownMenu() {
   const mountainDropdownList = document.getElementById("dropdownMountainList");
-  if (mountainDropdownList) {
-    mountainDropdownList.innerHTML = LIST_GUNUNG.map(g => `
-      <a class="dropdown-mountain-item" href="index.html?id=${g.id}">
-        <strong>
-          <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
-          ${g.nama}
-        </strong>
-        <span>${g.mdplText}</span>
-      </a>
-    `).join("");
+  if (!mountainDropdownList) return;
+
+  let mountains = [];
+  if (typeof CloudDB !== "undefined") {
+    mountains = await CloudDB.getAllMountains();
+  } else if (typeof LIST_GUNUNG !== "undefined") {
+    mountains = LIST_GUNUNG;
   }
+
+  mountainDropdownList.innerHTML = mountains.map(g => `
+    <a class="dropdown-mountain-item" href="index.html?id=${g.id}">
+      <strong>
+        <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
+        ${g.nama}
+      </strong>
+      <span>${g.mdplText}</span>
+    </a>
+  `).join("");
 }
 
 function toggleMenu(event) {

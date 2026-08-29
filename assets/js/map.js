@@ -1,6 +1,6 @@
 /**
- * MOUNTAIN GALLERY - MAP LOGIC (Clean & Bulletproof)
- * Interactive Leaflet Map with Basemap Switcher, Region Filters & Smooth Zoom
+ * MOUNTAIN GALLERY - MAP LOGIC (Cloud-Synced with Fallback)
+ * Interactive Leaflet Map connected with Supabase CloudDB & local data.js
  */
 
 let map;
@@ -8,6 +8,7 @@ let markers = [];
 let activeLayer;
 let currentFilterRegion = "all";
 let currentFilterElevation = 0;
+let cachedMountains = [];
 
 // Tile layers configurations
 const mapLayers = {
@@ -59,7 +60,7 @@ const luxuryIcon = L.divIcon({
   popupAnchor: [0, -60]
 });
 
-function initMap() {
+async function initMap() {
   const mapBounds = [
     [-8.80, 105.00],
     [-5.00, 115.00]
@@ -75,13 +76,25 @@ function initMap() {
 
   activeLayer = mapLayers.street.addTo(map);
 
-  renderMarkers();
+  await loadAndRenderMountains();
   setupFilters();
-  setupDrawerMenu();
 
   setTimeout(() => {
     map.invalidateSize();
   }, 350);
+}
+
+async function loadAndRenderMountains() {
+  if (typeof CloudDB !== "undefined") {
+    cachedMountains = await CloudDB.getAllMountains();
+  } else if (typeof LIST_GUNUNG !== "undefined") {
+    cachedMountains = LIST_GUNUNG;
+  } else {
+    cachedMountains = [];
+  }
+
+  renderMarkers();
+  setupDrawerMenu();
 }
 
 function setBasemap(type) {
@@ -136,7 +149,7 @@ function renderMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
-  LIST_GUNUNG.forEach((gunung) => {
+  cachedMountains.forEach((gunung) => {
     if (currentFilterRegion !== "all" && !gunung.region.toLowerCase().includes(currentFilterRegion.toLowerCase())) {
       return;
     }
@@ -184,7 +197,7 @@ function selectMountainFromMenu(mountainId) {
   const dropdown = document.getElementById("siteDropdown");
   if (dropdown) dropdown.classList.remove("active");
 
-  const gunung = getGunungById(mountainId);
+  const gunung = cachedMountains.find(m => m.id === mountainId || m.slug === mountainId);
   if (gunung) {
     if (currentFilterRegion !== "all" || currentFilterElevation > 0) {
       currentFilterRegion = "all";
@@ -200,7 +213,7 @@ function selectMountainFromMenu(mountainId) {
       mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    const marker = markers.find(m => m.gunungData && m.gunungData.id === gunung.id);
+    const marker = markers.find(m => m.gunungData && (m.gunungData.id === gunung.id || m.gunungData.slug === gunung.slug));
     fokusGunung(gunung, marker);
   }
 }
@@ -232,7 +245,7 @@ function setupDrawerMenu() {
   const mountainDropdownList = document.getElementById("dropdownMountainList");
 
   if (mountainDropdownList) {
-    mountainDropdownList.innerHTML = LIST_GUNUNG.map(g => `
+    mountainDropdownList.innerHTML = cachedMountains.map(g => `
       <button type="button" class="dropdown-mountain-item" onclick="selectMountainFromMenu('${g.id}')">
         <strong>
           <span class="svg-icon"><svg viewBox="0 0 24 24"><path d="M3 19L9 8L14 15L17 11L21 19H3Z"/></svg></span>
