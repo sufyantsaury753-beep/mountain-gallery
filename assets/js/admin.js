@@ -102,17 +102,17 @@ async function renderDashboardOverview() {
   const recentContainer = document.getElementById("recentMountainsList");
   if (recentContainer) {
     recentContainer.innerHTML = mountains.map(m => `
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--admin-border);">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <img src="${resolveAssetPath(m.cover)}" style="width:40px; height:40px; border-radius:10px; object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=100'">
+      <div class="recent-mountain-row">
+        <div class="recent-mountain-info">
+          <img src="${resolveAssetPath(m.cover)}" class="recent-mountain-thumb" alt="${m.nama}" onerror="this.src='https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=100'">
           <div>
-            <strong style="font-size:13.5px; color:var(--admin-text);">${m.nama}</strong>
-            <div style="font-size:11.5px; color:var(--admin-muted);">${m.region} · ${m.mdplText}</div>
+            <strong class="recent-mountain-name">${m.nama}</strong>
+            <div class="recent-mountain-meta">${m.region} · ${m.mdplText || (m.mdpl ? `${m.mdpl.toLocaleString()} Mdpl` : '')}</div>
           </div>
         </div>
-        <div style="display:flex; gap:8px;">
-          <button class="btn-admin btn-admin-outline" style="padding:4px 10px; font-size:11.5px;" onclick="openEditMountainModal('${m.id}')">Edit</button>
-          <button class="btn-admin btn-admin-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectMountainForMedia('${m.id}')">Kelola Foto</button>
+        <div class="recent-mountain-actions">
+          <button class="btn-admin btn-admin-outline" onclick="openEditMountainModal('${m.id}')">Edit</button>
+          <button class="btn-admin btn-admin-outline" onclick="selectMountainForMedia('${m.id}')">Kelola Dokumen</button>
         </div>
       </div>
     `).join("");
